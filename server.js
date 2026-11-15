@@ -1,24 +1,27 @@
-const express = require("express");
-const path = require("path");
-const nodemailer = require("nodemailer");
+Const express = require("express");
+Const path = require("path");
+Const nodemailer = require("nodemailer");
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-const ROOT = __dirname;
+Const app = express();
+Const PORT = process.env.PORT || 3000;
+Const ROOT = __dirname;
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: "carspakato@gmail.com",
-    pass: "epglqkeatpsavcwo"
+// Konfiguracja poczty home.pl dla Car Spa Kato
+Const transporter = nodemailer.createTransport({
+  Host: "poczta2686890.home.pl",
+  Port: 465, // lub 587 dla TLS
+  Secure: true, // true dla portu 465, false dla 587
+  Auth: {
+    User: "kontakt@carspakato.pl",
+    Pass: process.env.MAIL_PASS || "TUTAJ_WPISZ_HASLO" // Zmień lub ustaw w zmiennych Render
   }
 });
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(express.static(path.join(ROOT, "public")));
+App.use(express.urlencoded({ extended: true }));
+App.use(express.json());
+App.use(express.static(path.join(ROOT, "public")));
 
-const servicesList = [
+Const servicesList = [
   { id:1, name: "Mycie – Premium wash", description: "Dokładne, bezpieczne mycie wstępne i właściwe.", price: "od 200 zł", duration: "2-3 godz." },
   { id:2, name: "Mycie – Detailing wnętrza", description: "Dokładne czyszczenie i pielęgnacja elementów wnętrza.", price: "od 300 zł", duration: "4-6 godz." },
   { id:3, name: "Podstawowe sprzątanie wnętrza", description: "Szybkie odświeżenie i odkurzenie kabiny.", price: "od 100 zł", duration: "1-2 godz." },
@@ -35,37 +38,33 @@ const servicesList = [
   { id:14, name: "Przygotowanie auta SUV do sprzedaży", description: "Pełny pakiet przygotowawczy dla dużych aut typu SUV.", price: "od 1 000 zł", duration: "1-2 dni" }
 ];
 
-app.get('/api/services', (req, res) => {
-  res.json(servicesList);
+App.get('/api/services', (req, res) => {
+  Res.json(servicesList);
 });
 
-// Endpoint rezerwacji bez daty i godziny
-app.post('/api/booking', async (req, res) => {
-  const { name, phone, email, service_id, notes } = req.body;
-  
-  if (!name || !phone || !service_id) {
-    return res.status(400).json({ error: "Wypełnij wymagane pola." });
-  }
+// Endpoint dopasowany do /api/contact, przyjmuje zgłoszenia bez restrykcyjnych wzorców
+App.post('/api/contact', async (req, res) => {
+  Const { name, phone, email, service_id, message } = req.body;
 
-  try {
-    await transporter.sendMail({
-      from: '"CARSPA KATO" <carspakato@gmail.com>',
-      to: "carspakato@gmail.com",
-      subject: `Nowe zgłoszenie: ${name} (${phone})`,
-      text: `Masz nowe zgłoszenie rezerwacji ze strony!\n\nImię i nazwisko: ${name}\nTelefon: ${phone}\nE-mail klienta: ${email || "brak"}\nWybrana usługa (ID): ${service_id}\nDodatkowe informacje: ${notes || "brak"}`
+  Try {
+    Await transporter.sendMail({
+      From: '"CARSPA KATO" <kontakt@carspakato.pl>',
+      To: "kontakt@carspakato.pl",
+      Subject: `Nowe zgłoszenie z formularza: ${name || "Klient"}`,
+      Text: `Masz nowe zgłoszenie ze strony carspakato.pl!\n\nImię: ${name || "brak"}\nTelefon: ${phone || "brak"}\nE-mail: ${email || "brak"}\nWybrana usługa: ${service_id || "brak"}\nWiadomość: ${message || "brak"}`
     });
 
-    res.json({ success: true, message: "Zgłoszenie zostało wysłane!" });
+    Res.json({ success: true, message: "Zgłoszenie zostało wysłane pomyślnie!" });
   } catch (err) {
-    console.error("Błąd wysyłania e-maila:", err);
-    res.status(500).json({ error: "Nie udało się wysłać wiadomości e-mail." });
+    Console.error("Błąd wysyłania e-maila:", err);
+    Res.status(500).json({ success: false, message: "Nie udało się wysłać wiadomości e-mail." });
   }
 });
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(ROOT, "public", "index.html"));
+App.get("*", (req, res) => {
+  Res.sendFile(path.join(ROOT, "public", "index.html"));
 });
 
-app.listen(PORT, () => {
-  console.log(`CARSPA KATO działa na: http://localhost:${PORT}`);
+App.listen(PORT, () => {
+  Console.log(`CARSPA KATO działa na: http://localhost:${PORT}`);
 });
