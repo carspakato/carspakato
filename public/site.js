@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
     { id: 14, name: "Przygotowanie auta SUV do sprzedaży", description: "Pełny pakiet przygotowawczy dla dużych aut typu SUV.", price: "od 1 000 zł", duration: "1-2 dni" }
   ];
 
-  // Kafelki usług – tylko nazwa i opis (bez cen i czasu)
   const servicesContainer = document.querySelector("#services");
   if (servicesContainer) {
     servicesContainer.innerHTML = services.map(s => `
@@ -39,7 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
     `).join("");
   }
 
-  // Cennik (tutaj ceny zostają, żeby klient widział koszty)
   const priceList = document.querySelector("#priceList");
   if (priceList) {
     priceList.innerHTML = services.map(s => `
@@ -53,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const serviceSelect = document.querySelector("#serviceSelect");
   if (serviceSelect) {
     serviceSelect.innerHTML = '<option value="">Wybierz usługę</option>' + services.map(s => `
-      <option value="${s.id}">${s.name} - ${s.price}</option>
+      <option value="${s.name}">${s.name} - ${s.price}</option>
     `).join("");
   }
 
@@ -62,30 +60,34 @@ document.addEventListener("DOMContentLoaded", () => {
     bookingForm.addEventListener("submit", async e => {
       e.preventDefault();
       const msg = document.querySelector("#formMessage");
-      if (msg) msg.textContent = "Wysyłanie zgłoszenia...";
+      if (msg) {
+        msg.style.color = "#ffffff";
+        msg.textContent = "Wysyłanie zgłoszenia...";
+      }
       try {
         const formData = new FormData(bookingForm);
         const dataObj = Object.fromEntries(formData.entries());
         dataObj.consent = formData.get("consent") === "on";
 
-        const res = await fetch("/api/booking", {
+        const res = await fetch("/api/contact", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(dataObj)
         });
         const result = await res.json();
-        if (!res.ok) throw new Error(result.error || "Nie udało się wysłać");
+        if (!res.ok) throw new Error(result.message || "Nie udało się wysłać");
         
-        if (msg) msg.textContent = "Dziękujemy! Zgłoszenie zostało wysłane.";
+        if (msg) {
+          msg.style.color = "#a3e635"; // Kolor lime
+          msg.textContent = "Dziękujemy! Zgłoszenie zostało wysłane pomyślnie.";
+        }
         bookingForm.reset();
       } catch (err) {
-        if (msg) msg.textContent = err.message;
+        if (msg) {
+          msg.style.color = "#f87171"; // Czerwony kolor błędu
+          msg.textContent = "Błąd: " + err.message;
+        }
       }
     });
-  }
-
-  const dateInput = document.querySelector('input[name="preferred_date"]');
-  if (dateInput) {
-    dateInput.min = new Date().toISOString().split('T')[0];
   }
 });
