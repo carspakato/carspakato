@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Obsługa rozwijanego menu "Usługi" na desktopie i mobile
+  // Obsługa rozwijanego menu "Usługi"
   const servicesDropdownBtn = document.getElementById('servicesDropdownBtn');
   const servicesDropdownMenu = document.getElementById('servicesDropdownMenu');
   if (servicesDropdownBtn && servicesDropdownMenu) {
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const yearEl = document.querySelector("#year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // Definicja 6 głównych usług do kafelków na stronie głównej
+  // Kafelki usług na stronie głównej
   const services = [
     { name: "Detailing zewnętrzny", description: "Kompleksowe, bezpieczne mycie i wieloetapowe odświeżenie karoserii.", link: "/detailing-zewnetrzny.html" },
     { name: "Detailing wewnętrzny", description: "Dogłębne czyszczenie kabiny, pranie tapicerki i impregnacja.", link: "/detailing-wewnetrzny.html" },
@@ -49,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Zmiana koloru auta", description: "Folie PPF kolorowe oraz folie winylowe (wrapy) + stylizacja wnętrza.", link: "/zmiana-koloru-auta.html" }
   ];
 
-  // Renderowanie kafelków usług na stronie głównej
   const servicesContainer = document.querySelector("#services");
   if (servicesContainer) {
     servicesContainer.innerHTML = services.map(s => `
@@ -61,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     `).join("");
   }
 
-  // Pobieranie danych galerii i ustawień kontaktowych
+  // Galeria i kontakt
   async function loadHomePageData() {
     try {
       const res = await fetch('/api/gallery');
@@ -108,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadHomePageData();
 
-  // Obsługa formularza rezerwacji
+  // Formularz kontaktowy
   const bookingForm = document.querySelector("#bookingForm");
   if (bookingForm) {
     bookingForm.addEventListener("submit", async e => {
@@ -145,3 +144,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+function openLightbox(url) {
+  const modal = document.getElementById('lightboxModal');
+  const modalImg = document.getElementById('lightboxImg');
+  if (modal && modalImg) {
+    modalImg.src = url;
+    modal.style.display = 'flex';
+  }
+}
