@@ -41,8 +41,8 @@ app.post('/api/contact', async (req, res) => {
 
   try {
     const data = await resend.emails.send({
-      from: 'CARSPA KATO <onboarding@resend.dev>',
-      to: "carspakato@gmail.com", // <-- Adres powiązany z Twoim kontem Resend do testów
+      from: 'CARSPA KATO <kontakt@carspakato.pl>',
+      to: "kontakt@carspakato.pl",
       subject: `Nowe zgłoszenie z formularza: ${name || "Klient"}`,
       text: `Masz nowe zgłoszenie ze strony carspakato.pl!\n\nImię: ${name || "brak"}\nTelefon: ${phone || "brak"}\nE-mail: ${email || "brak"}\nWybrana usługa: ${service_id || "brak"}\nWiadomość: ${message || "brak"}`
     });
