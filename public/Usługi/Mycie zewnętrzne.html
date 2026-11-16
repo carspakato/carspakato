@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Korekta lakieru Katowice – jednoetapowe odświeżenie oraz wieloetapowa renowacja lakieru w CARSPA KATO.">
+<title>Korekta Lakieru | CARSPA KATO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/"><span class="brand-mark">C</span><span>CARSPA <span class="lime">KATO</span><small>STUDIO DETAILINGU</small></span></a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Otwórz menu">☰</button>
+    <nav id="nav">
+        <a href="/#uslugi">Usługi</a>
+        <a href="/#cennik">Cennik</a>
+        <a href="/#galeria">Galeria</a>
+        <a href="/#kontakt">Kontakt</a>
+        <a class="nav-cta" href="/#rezerwacja">Umów wizytę</a>
+    </nav>
+</header>
+
+<main>
+    <section class="section" style="padding-top: 130px;">
+        <div style="margin-bottom: 24px;">
+            <a href="/#uslugi" style="color: #ccff00; text-decoration: none; font-weight: 600; font-size: 14px;">← WRÓĆ DO WSZYSTKICH USŁUG</a>
+        </div>
+        
+        <p class="eyebrow">OFERTA SZCZEGÓŁOWA • RENOWACJA</p>
+        <h1>KOREKTA <span class="lime">LAKIERU</span></h1>
+        <p style="max-width: 720px; color: #ccc; font-size: 18px; line-height: 1.6; margin-top: 16px;">
+            Usuwamy zarysowania, zmatowienia, hologramy oraz ślady po myjniach automatycznych, przywracając lakierowi fabryczną głębię i lustrzany połysk.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 48px;">
+            <div style="background: #181818; border: 1px solid #333; border-radius: 8px; padding: 28px;">
+                <p class="eyebrow" style="margin-bottom: 8px;">WARIANT I</p>
+                <h3 style="margin-bottom: 12px;">ONE STEP (ODŚWIEŻENIE)</h3>
+                <p style="color: #bbb; font-size: 15px; line-height: 1.6; margin-bottom: 20px;">
+                    Jednoetapowe polerowanie usuwające do 50–60% drobnych rys i oksydacji. Idealne dla aut w dobrym stanie lub przed sprzedażą.
+                </p>
+                <ul style="color: #ddd; font-size: 14px; line-height: 1.8; padding-left: 18px; margin-bottom: 24px;">
+                    <li>Wieloetapowe mycie detailingowe i dekontaminacja</li>
+                    <li>Glinkowanie lakieru</li>
+                    <li>Jednoetapowe polerowanie maszynowe</li>
+                    <li>Zabezpieczenie woskiem syntetycznym lub sealantem</li>
+                </ul>
+                <p style="font-weight: 700; color: #ccff00; font-size: 20px;">od 800 zł</p>
+            </div>
+
+            <div style="background: #181818; border: 1px solid #ccff00; border-radius: 8px; padding: 28px;">
+                <p class="eyebrow" style="margin-bottom: 8px;">WARIANT II</p>
+                <h3 style="margin-bottom: 12px;">PEŁNA KOREKTA (2-3 ETAPY)</h3>
+                <p style="color: #bbb; font-size: 15px; line-height: 1.6; margin-bottom: 20px;">
+                    Wieloetapowa renowacja usuwająca do 90–95% defektów lakierniczych. Maksymalna głębia koloru i perfekcyjne wykończenie.
+                </p>
+                <ul style="color: #ddd; font-size: 14px; line-height: 1.8; padding-left: 18px; margin-bottom: 24px;">
+                    <li>Pełna dekontaminacja chemiczna i mechaniczna</li>
+                    <li>Pomiar grubości powłoki lakierniczej</li>
+                    <li>Cięcie głębokich rys + polish + finish</li>
+                    <li>Odtłuszczenie i przygotowanie pod powłokę ceramiczną</li>
+                </ul>
+                <p style="font-weight: 700; color: #ccff00; font-size: 20px;">od 1500 zł</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 48px; background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 32px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px;">
+            <div>
+                <h3 style="margin-bottom: 6px;">Chcesz umówić auto na bezpłatne oględziny?</h3>
+                <p style="color: #aaa; margin: 0;">Ocenimy stan lakieru pod lampami inspekcyjnymi i dobierzemy najlepszy wariant.</p>
+            </div>
+            <a class="btn primary" href="/#rezerwacja">ZAREZERWUJ TERMIN <span>↗️</span></a>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <a class="brand" href="/"><span class="brand-mark">C</span><span>CARSPA <span class="lime">KATO</span><small>STUDIO DETAILINGU</small></span></a>
+    <span>©️ <span id="year"></span> CARSPA KATO. Wszelkie prawa zastrzeżone.</span>
+    <a href="/admin.html">Panel administratora</a>
+</footer>
+
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const menuToggle = document.getElementById('menuToggle');
+    const nav = document.getElementById('nav');
+    if (menuToggle && nav) {
+        menuToggle.addEventListener('click', () => nav.classList.toggle('open'));
+    }
+</script>
+</body>
+</html>
