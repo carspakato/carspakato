@@ -78,13 +78,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!res.ok) throw new Error(result.message || "Nie udało się wysłać");
         
         if (msg) {
-          msg.style.color = "#a3e635"; // Kolor lime
+          msg.style.color = "#a3e635";
           msg.textContent = "Dziękujemy! Zgłoszenie zostało wysłane pomyślnie.";
         }
         bookingForm.reset();
       } catch (err) {
         if (msg) {
-          msg.style.color = "#f87171"; // Czerwony kolor błędu
+          msg.style.color = "#f87171";
           msg.textContent = "Błąd: " + err.message;
         }
       }
