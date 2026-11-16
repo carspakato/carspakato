@@ -1,4 +1,4 @@
-const $=s=>document.querySelector(s);let servicesCache=[];
+Const $=s=>document.querySelector(s);let servicesCache=[];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 async function api(url,opts={}){const r=await fetch(url,opts);const d= r.status===204?{}:await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Wystąpił błąd.");return d}
 function showDashboard(email){$("#login").classList.add("hidden");$("#dashboard").classList.remove("hidden");$("#adminEmail").textContent=email;refreshAll()}
@@ -14,7 +14,26 @@ document.querySelectorAll("[data-edit-service]").forEach(f=>f.onsubmit=async e=>
 document.querySelectorAll("[data-delete-service]").forEach(b=>b.onclick=async()=>{if(confirm("Usunąć tę usługę?")){await api("/api/admin/services/"+b.dataset.deleteService,{method:"DELETE"});loadServices()}})}
 $("#serviceForm").onsubmit=async e=>{e.preventDefault();try{await api("/api/admin/services",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.fromEntries(new FormData(e.currentTarget)))});e.currentTarget.reset();loadServices();$("#adminMsg").textContent="Dodano usługę."}catch(x){$("#adminMsg").textContent=x.message}};
 async function loadGallery(){const d=await api("/api/public-data");$("#galleryAdmin").innerHTML=d.gallery.map(g=>`<div><img src="/uploads/${encodeURIComponent(g.filename)}"><p>${esc(g.caption)}</p><button class="danger" data-delete-photo="${g.id}">Usuń</button></div>`).join("")||'<p class="muted">Brak zdjęć w galerii.</p>';document.querySelectorAll("[data-delete-photo]").forEach(b=>b.onclick=async()=>{if(confirm("Usunąć zdjęcie?")){await api("/api/admin/gallery/"+b.dataset.deletePhoto,{method:"DELETE"});loadGallery()}})}
-$("#galleryForm").onsubmit=async e=>{e.preventDefault();const fd=new FormData(e.currentTarget);try{const r=await fetch("/api/admin/gallery",{method:"POST",body:fd});const d=await r.json();if(!r.ok)throw Error(d.error);e.currentTarget.reset();loadGallery();$("#adminMsg").textContent="Dodano zdjęcie."}catch(x){$("#adminMsg").textContent=x.message}};
+
+// POPRAWIONY FORMULARZ GALERII (zabezpieczony przed błędem resetu)
+$("#galleryForm").onsubmit=async e=>{
+  e.preventDefault();
+  const formElement = e.currentTarget;
+  const fd = new FormData(formElement);
+  try {
+    const r=await fetch("/api/admin/gallery",{method:"POST",body:fd});
+    const d=await r.json();
+    if(!r.ok)throw Error(d.error);
+    formElement.reset();
+    loadGallery();
+    const msg = $("#adminMsg");
+    if(msg) msg.textContent="Dodano zdjęcie.";
+  } catch(x) {
+    const msg = $("#adminMsg");
+    if(msg) msg.textContent=x.message;
+  }
+};
+
 async function loadSettings(){const d=await api("/api/public-data");const f=$("#settingsForm");Object.keys(d.settings).forEach(k=>{if(f.elements[k])f.elements[k].value=d.settings[k]})}
 $("#settingsForm").onsubmit=async e=>{e.preventDefault();try{await api("/api/admin/settings",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.fromEntries(new FormData(e.currentTarget)))});$("#adminMsg").textContent="Zapisano ustawienia."}catch(x){$("#adminMsg").textContent=x.message}};
 check();
