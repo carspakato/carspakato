@@ -95,12 +95,12 @@
         <div class="nav-dropdown" id="servicesDropdown">
             <a href="#uslugi" class="nav-dropdown-btn" id="servicesDropdownBtn">Usługi ▾</a>
             <div class="nav-dropdown-menu" id="servicesDropdownMenu">
-                <a href="/uslugi/detailing-zewnetrzny.html">Detailing zewnętrzny</a>
-                <a href="/uslugi/detailing-wnetrzny.html">Detailing wewnętrzny</a>
-                <a href="/uslugi/korekty-lakieru.html">Korekty lakieru</a>
-                <a href="/uslugi/ochrona-lakieru.html">Ochrona lakieru</a>
-                <a href="/uslugi/zabezpieczenie-lakieru.html">Zabezpieczenie lakieru</a>
-                <a href="/uslugi/zmiana-koloru-auta.html">Zmiana koloru auta</a>
+                <a href="/detailing-zewnetrzny.html">Detailing zewnętrzny</a>
+                <a href="/detailing-wnetrzny.html">Detailing wewnętrzny</a>
+                <a href="/korekty-lakieru.html">Korekty lakieru</a>
+                <a href="/ochrona-lakieru.html">Ochrona lakieru</a>
+                <a href="/zabezpieczenie-lakieru.html">Zabezpieczenie lakieru</a>
+                <a href="/zmiana-koloru-auta.html">Zmiana koloru auta</a>
                 <a href="#uslugi" style="color: #ccff00 !important; font-weight: 600;">Wszystkie usługi →</a>
             </div>
         </div>
@@ -182,106 +182,3 @@
         } catch (err) {
             console.error("Błąd ładowania galerii:", err);
         }
-
-        // 2. Ładowanie ustawień kontaktowych
-        try {
-            const res = await fetch('/api/settings');
-            const settings = await res.json();
-            
-            if (settings) {
-                if (settings.phone) {
-                    const phoneEl = document.getElementById('contactPhone');
-                    if (phoneEl) {
-                        phoneEl.textContent = settings.phone;
-                        phoneEl.href = `tel:${settings.phone.replace(/\s+/g, '')}`;
-                    }
-                }
-                if (settings.email) {
-                    const emailEl = document.getElementById('contactEmail');
-                    if (emailEl) {
-                        emailEl.textContent = settings.email;
-                        emailEl.href = `mailto:${settings.email}`;
-                    }
-                }
-                if (settings.address) {
-                    const addressEl = document.getElementById('contactAddress');
-                    if (addressEl) {
-                        addressEl.textContent = settings.address;
-                    }
-                }
-            }
-        } catch (err) {
-            console.error("Błąd ładowania ustawień:", err);
-        }
-    }
-
-    function setupBookingForm() {
-        const form = document.getElementById('bookingForm');
-        const formMessage = document.getElementById('formMessage');
-
-        if (!form) return;
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(form);
-            const data = {
-                name: formData.get('name'),
-                phone: formData.get('phone'),
-                email: formData.get('email'),
-                service_id: formData.get('service_id') || 'Brak wybranej usługi',
-                message: formData.get('message')
-            };
-
-            if (formMessage) {
-                formMessage.textContent = "Wysyłanie zgłoszenia...";
-                formMessage.style.color = "#ccff00";
-            }
-
-            try {
-                const response = await fetch('/api/contact', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-
-                if (response.ok && result.success) {
-                    if (formMessage) {
-                        formMessage.textContent = "Zgłoszenie zostało wysłane pomyślnie! Skontaktujemy się wkrótce.";
-                        formMessage.style.color = "#ccff00";
-                    }
-                    form.reset();
-                } else {
-                    if (formMessage) {
-                        formMessage.textContent = result.message || "Błąd podczas wysyłania. Spróbuj ponownie.";
-                        formMessage.style.color = "#ff4d4d";
-                    }
-                }
-            } catch (err) {
-                if (formMessage) {
-                    formMessage.textContent = "Błąd połączenia z serwerem.";
-                    formMessage.style.color = "#ff4d4d";
-                }
-            }
-        });
-    }
-
-    function openLightbox(url) {
-        const modal = document.getElementById('lightboxModal');
-        const modalImg = document.getElementById('lightboxImg');
-        if (modal && modalImg) {
-            modalImg.src = url;
-            modal.style.display = 'flex';
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        setupServicesDropdown();
-        loadHomePageData();
-        setupBookingForm();
-    });
-</script>
-</body>
-</html>
