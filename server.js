@@ -174,6 +174,21 @@ app.get("/admin.html", (req, res) => {
   res.sendFile(path.join(ROOT, "public", "admin.html"));
 });
 
+// Jawne trasy dla podstron usług (gwarantują natychmiastowe przekierowanie)
+app.get("/detailing-wewnetrzny", (req, res) => {
+  res.sendFile(path.join(ROOT, "public", "detailing-wewnetrzny.html"));
+});
+app.get("/detailing-wewnetrzny.html", (req, res) => {
+  res.sendFile(path.join(ROOT, "public", "detailing-wewnetrzny.html"));
+});
+
+app.get("/detailing-zewnetrzny", (req, res) => {
+  res.sendFile(path.join(ROOT, "public", "detailing-zewnetrzny.html"));
+});
+app.get("/detailing-zewnetrzny.html", (req, res) => {
+  res.sendFile(path.join(ROOT, "public", "detailing-zewnetrzny.html"));
+});
+
 // Formularz kontaktowy
 app.post("/api/contact", async (req, res) => {
   const { name, phone, email, service_id, message } = req.body;
@@ -191,7 +206,7 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-// Uniwersalna obsługa podstron usług (szuka w folderach 'uslugi', 'Usługi' oraz w głównym katalogu 'public')
+// Uniwersalna obsługa dla pozostałych usług
 app.get("/uslugi/:slug", (req, res, next) => {
   const rawSlug = decodeURIComponent(req.params.slug);
   const slug = rawSlug.endsWith('.html') ? rawSlug : `${rawSlug}.html`;
