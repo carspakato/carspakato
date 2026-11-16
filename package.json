@@ -1,25 +1,13 @@
 {
-  "name": "carspa-kato-studio",
+  "name": "carspakato",
   "version": "1.0.0",
-  "private": true,
-  "description": "Strona i panel rezerwacji CARSPA KATO",
+  "description": "CARSPA KATO website",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "engines": {
-    "node": ">=20"
-  },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "connect-sqlite3": "^0.9.15",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "express-session": "^1.18.1",
-    "helmet": "^8.0.0",
-    "morgan": "^1.10.0",
-    "multer": "^1.4.5-lts.1",
-    "nodemailer": "^6.10.0",
-    "twilio": "^5.4.0"
+    "express": "^4.18.2",
+    "resend": "^4.0.0"
   }
 }
