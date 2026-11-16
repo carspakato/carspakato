@@ -11,8 +11,8 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: "kontakt@carspakato.pl",
-    pass: "Hania2022."
+    user: "kontakt+carspakato_pl.poczta2686890@poczta2686890.home.pl",
+    pass: "qouw-mvge-eunv-bfab"
   }
 });
 
