@@ -130,7 +130,7 @@ app.post("/api/admin/gallery", requireAdmin, upload.single('image'), (req, res) 
     const imageUrl = `/uploads/${req.file.filename}`;
     const gallery = getGallery();
     const newImage = { id: Date.now(), url: imageUrl };
-    gallery.unshift(newImage); // Dodaj na początek listy
+    gallery.unshift(newImage);
     saveGallery(gallery);
     res.json({ success: true, image: newImage });
   } catch (err) {
@@ -191,6 +191,17 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
+// Jawna obsługa podstron usług (działa zarówno z .html, jak i bez .html)
+app.get("/uslugi/:slug", (req, res, next) => {
+  const slug = req.params.slug.endsWith('.html') ? req.params.slug : `${req.params.slug}.html`;
+  const filePath = path.join(ROOT, "public", "uslugi", slug);
+  if (fs.existsSync(filePath)) {
+    return res.sendFile(filePath);
+  }
+  next();
+});
+
+// Domyślny fallback na stronę główną
 app.get("*", (req, res) => {
   res.sendFile(path.join(ROOT, "public", "index.html"));
 });
