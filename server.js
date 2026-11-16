@@ -191,12 +191,21 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-// Jawna obsługa podstron usług (działa zarówno z .html, jak i bez .html)
+// Uniwersalna obsługa podstron usług (szuka w folderach 'uslugi', 'Usługi' oraz w głównym katalogu 'public')
 app.get("/uslugi/:slug", (req, res, next) => {
-  const slug = req.params.slug.endsWith('.html') ? req.params.slug : `${req.params.slug}.html`;
-  const filePath = path.join(ROOT, "public", "uslugi", slug);
-  if (fs.existsSync(filePath)) {
-    return res.sendFile(filePath);
+  const rawSlug = decodeURIComponent(req.params.slug);
+  const slug = rawSlug.endsWith('.html') ? rawSlug : `${rawSlug}.html`;
+  
+  const possiblePaths = [
+    path.join(ROOT, "public", "uslugi", slug),
+    path.join(ROOT, "public", "Usługi", slug),
+    path.join(ROOT, "public", slug)
+  ];
+
+  for (const filePath of possiblePaths) {
+    if (fs.existsSync(filePath)) {
+      return res.sendFile(filePath);
+    }
   }
   next();
 });
