@@ -139,3 +139,24 @@ app.post("/api/contact", async (req, res) => {
   const { name, phone, email, service_id, message } = req.body;
   const settings = getSettings();
   try {
+    await resend.emails.send({
+      from: 'CARSPA KATO <kontakt@carspakato.pl>',
+      to: settings.email,
+      subject: `Nowa rezerwacja od: ${name || "Klient"}`,
+      text: `Imię: ${name}\nTelefon: ${phone}\nE-mail: ${email}\nUsługa: ${service_id}\nWiadomość: ${message}`
+    });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
+});
+
+app.get("*", (req, res) => {
+  const filePath = path.join(ROOT, "public", req.path);
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+    return res.sendFile(filePath);
+  }
+  res.sendFile(path.join(ROOT, "public", "index.html"));
+});
+
+app.listen(PORT, () => { console.log(`Serwer działa na porcie ${PORT}`); });
