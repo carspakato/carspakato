@@ -1,93 +1,25 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const menuToggle = document.querySelector("#menuToggle");
-  const nav = document.querySelector("#nav");
-  if (menuToggle && nav) {
-    menuToggle.addEventListener("click", () => nav.classList.toggle("open"));
-    nav.querySelectorAll("a").forEach(a => 
-      a.addEventListener("click", () => nav.classList.remove("open"))
-    );
-  }
+// Automatyczne ładowanie galerii realizacji na stronie głównej
+async function loadGallery() {
+  try {
+    const res = await fetch('/api/gallery');
+    const images = await res.json();
+    const galleryContainer = document.getElementById('gallery');
+    
+    if (!galleryContainer) return;
 
-  const yearEl = document.querySelector("#year");
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
+    if (!images || images.length === 0) {
+      galleryContainer.innerHTML = '<div class="gallery-empty">Wkrótce pojawią się tutaj zdjęcia naszych realizacji.</div>';
+      return;
+    }
 
-  const services = [
-    { id: 1, name: "Mycie – Premium wash", description: "Dokładne, bezpieczne mycie wstępne i właściwe.", price: "od 200 zł", duration: "2-3 godz." },
-    { id: 2, name: "Mycie – Detailing wnętrza", description: "Dokładne czyszczenie i pielęgnacja elementów wnętrza.", price: "od 300 zł", duration: "4-6 godz." },
-    { id: 3, name: "Podstawowe sprzątanie wnętrza", description: "Szybkie odświeżenie i odkurzenie kabiny.", price: "od 100 zł", duration: "1-2 godz." },
-    { id: 4, name: "Pranie kompleksowe tapicerki", description: "Głębokie czyszczenie wszystkich elementów materiałowych.", price: "od 400 zł", duration: "1 dzień" },
-    { id: 5, name: "Korekty lakieru", description: "Odświeżenie lakieru, usunięcie rys i poprawa połysku.", price: "od 600 zł", duration: "1 dzień" },
-    { id: 6, name: "Zabezpieczenie karoserii woskiem", description: "Aplikacja trwałego wosku nadającego głęboki połysk.", price: "od 300 zł", duration: "3-4 godz." },
-    { id: 7, name: "Zabezpieczenie karoserii powłoką ceramiczną", description: "Trwała ochrona lakieru przed czynnikami zewnętrznymi.", price: "od 700 zł", duration: "1 dzień" },
-    { id: 8, name: "Zabezpieczenie lakieru folią PPF", description: "Najwyższy stopień ochrony lakieru przed odpryskami.", price: "do uzgodnienia", duration: "1-3 dni" },
-    { id: 9, name: "Zabezpieczenie szyb powłoką ceramiczną", description: "Hydrofobowa niewidzialna wycieraczka.", price: "od 300 zł", duration: "2 godz." },
-    { id: 10, name: "Renowacja reflektorów", description: "Usunięcie zmatowień i przywrócenie przejrzystości.", price: "od 100 zł/szt", duration: "1-2 godz." },
-    { id: 11, name: "Ozonowanie wnętrza", description: "Dezynfekcja i neutralizacja przykrych zapachów.", price: "od 250 zł", duration: "1 godz." },
-    { id: 12, name: "Przygotowanie auta hatchback do sprzedaży", description: "Kompleksowy detailing podnoszący wartość rynkową auta.", price: "od 600 zł", duration: "1 dzień" },
-    { id: 13, name: "Przygotowanie auta combi do sprzedaży", description: "Kompleksowe odświeżenie wersji kombi przed sprzedażą.", price: "od 800 zł", duration: "1 dzień" },
-    { id: 14, name: "Przygotowanie auta SUV do sprzedaży", description: "Pełny pakiet przygotowawczy dla dużych aut typu SUV.", price: "od 1 000 zł", duration: "1-2 dni" }
-  ];
-
-  const servicesContainer = document.querySelector("#services");
-  if (servicesContainer) {
-    servicesContainer.innerHTML = services.map(s => `
-      <article class="service-card">
-        <h3>${s.name}</h3>
-        <p>${s.description}</p>
-      </article>
-    `).join("");
-  }
-
-  const priceList = document.querySelector("#priceList");
-  if (priceList) {
-    priceList.innerHTML = services.map(s => `
-      <div class="price-row">
-        <span>${s.name}</span>
-        <strong>${s.price}</strong>
+    galleryContainer.innerHTML = images.map(img => `
+      <div class="gallery-item" style="background: #1a1a1a; padding: 10px; border-radius: 6px; border: 1px solid #2a2a2a;">
+        <img src="${img.url}" alt="Realizacja CARSPA KATO" style="width: 100%; height: 220px; object-fit: cover; border-radius: 4px;">
       </div>
-    `).join("");
+    `).join('');
+  } catch (err) {
+    console.error("Błąd ładowania galerii:", err);
   }
+}
 
-  const serviceSelect = document.querySelector("#serviceSelect");
-  if (serviceSelect) {
-    serviceSelect.innerHTML = '<option value="">Wybierz usługę</option>' + services.map(s => `
-      <option value="${s.name}">${s.name} - ${s.price}</option>
-    `).join("");
-  }
-
-  const bookingForm = document.querySelector("#bookingForm");
-  if (bookingForm) {
-    bookingForm.addEventListener("submit", async e => {
-      e.preventDefault();
-      const msg = document.querySelector("#formMessage");
-      if (msg) {
-        msg.style.color = "#ffffff";
-        msg.textContent = "Wysyłanie zgłoszenia...";
-      }
-      try {
-        const formData = new FormData(bookingForm);
-        const dataObj = Object.fromEntries(formData.entries());
-        dataObj.consent = formData.get("consent") === "on";
-
-        const res = await fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(dataObj)
-        });
-        const result = await res.json();
-        if (!res.ok) throw new Error(result.message || "Nie udało się wysłać");
-        
-        if (msg) {
-          msg.style.color = "#a3e635";
-          msg.textContent = "Dziękujemy! Zgłoszenie zostało wysłane pomyślnie.";
-        }
-        bookingForm.reset();
-      } catch (err) {
-        if (msg) {
-          msg.style.color = "#f87171";
-          msg.textContent = "Błąd: " + err.message;
-        }
-      }
-    });
-  }
-});
+document.addEventListener('DOMContentLoaded', loadGallery);
