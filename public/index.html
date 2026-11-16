@@ -31,7 +31,7 @@
 <body>
 <header class="topbar">
     <a class="brand" href="#">
-        <img src="/logo.svg" alt="CK Logo" style="width: 36px; height: 36px; border-radius: 4px; object-fit: contain; display: inline-block; vertical-align: middle;">
+        <span class="brand-mark">C</span>
         <span>CARSPA <span class="lime">KATO</span><small>STUDIO DETAILINGU</small></span>
     </a>
 <button class="menu-toggle" id="menuToggle" aria-label="Otwórz menu">☰</button>
@@ -52,7 +52,6 @@
         <div><p class="eyebrow">EFEKTY NASZEJ PRACY</p><h2>GALERIA <span class="lime">REALIZACJI</span></h2></div>
         <p>Każdy detal ma znaczenie.</p>
     </div>
-    <!-- Zmienione id na "gallery" żeby pasowało do skryptów -->
     <div id="gallery" class="gallery-grid">
         <div class="gallery-empty">Wkrótce pojawią się tutaj zdjęcia naszych realizacji.</div>
     </div>
@@ -64,7 +63,7 @@
 </main>
 <footer>
     <a class="brand" href="#">
-        <img src="/logo.svg" alt="CK Logo" style="width: 28px; height: 28px; border-radius: 3px; object-fit: contain; display: inline-block; vertical-align: middle; margin-right: 4px;">
+        <span class="brand-mark">C</span>
         <span>CARSPA <span class="lime">KATO</span><small>STUDIO DETAILINGU</small></span>
     </a>
     <span>©️ <span id="year"></span> CARSPA KATO. Wszelkie prawa zastrzeżone.</span>
@@ -78,7 +77,6 @@
 
 <script src="/site.js"></script>
 <script>
-    // Automatyczne ładowanie galerii, ustawień kontaktowych oraz obsługa formularza
     async function loadHomePageData() {
         // 1. Ładowanie galerii z Lightboxem
         try {
@@ -89,115 +87,4 @@
             if (images && images.length > 0) {
                 grid.innerHTML = images.map(img => `
                     <div style="border-radius: 8px; overflow: hidden; background: #181818; border: 1px solid #333; cursor: pointer;" onclick="openLightbox('${img.url}')">
-                        <img src="${img.url}" alt="Realizacja CARSPA KATO" style="width: 100%; height: 240px; object-fit: cover; display: block; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
-                    </div>
-                `).join('');
-            }
-        } catch (err) {
-            console.error("Błąd ładowania galerii:", err);
-        }
-
-        // 2. Ładowanie ustawień kontaktowych (telefon, e-mail, adres)
-        try {
-            const res = await fetch('/api/settings');
-            const settings = await res.json();
-            
-            if (settings) {
-                if (settings.phone) {
-                    const phoneEl = document.getElementById('contactPhone');
-                    if (phoneEl) {
-                        phoneEl.textContent = settings.phone;
-                        phoneEl.href = `tel:${settings.phone.replace(/\s+/g, '')}`;
-                    }
-                }
-                if (settings.email) {
-                    const emailEl = document.getElementById('contactEmail');
-                    if (emailEl) {
-                        emailEl.textContent = settings.email;
-                        emailEl.href = `mailto:${settings.email}`;
-                    }
-                }
-                if (settings.address) {
-                    const addressEl = document.getElementById('contactAddress');
-                    if (addressEl) {
-                        addressEl.textContent = settings.address;
-                    }
-                }
-            }
-        } catch (err) {
-            console.error("Błąd ładowania ustawień:", err);
-        }
-    }
-
-    // Obsługa wysyłania formularza rezerwacji
-    function setupBookingForm() {
-        const form = document.getElementById('bookingForm');
-        const formMessage = document.getElementById('formMessage');
-
-        if (!form) return;
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(form);
-            const data = {
-                name: formData.get('name'),
-                phone: formData.get('phone'),
-                email: formData.get('email'),
-                service_id: formData.get('service_id') || 'Brak wybranej usługi',
-                message: formData.get('message')
-            };
-
-            if (formMessage) {
-                formMessage.textContent = "Wysyłanie zgłoszenia...";
-                formMessage.style.color = "#ccff00";
-            }
-
-            try {
-                const response = await fetch('/api/contact', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-
-                if (response.ok && result.success) {
-                    if (formMessage) {
-                        formMessage.textContent = "Zgłoszenie zostało wysłane pomyślnie! Skontaktujemy się wkrótce.";
-                        formMessage.style.color = "#ccff00";
-                    }
-                    form.reset();
-                } else {
-                    if (formMessage) {
-                        formMessage.textContent = result.message || "Błąd podczas wysyłania. Spróbuj ponownie.";
-                        formMessage.style.color = "#ff4d4d";
-                    }
-                }
-            } catch (err) {
-                if (formMessage) {
-                    formMessage.textContent = "Błąd połączenia z serwerem.";
-                    formMessage.style.color = "#ff4d4d";
-                }
-            }
-        });
-    }
-
-    // Funkcja otwiera powiększone zdjęcie w oknie modalnym
-    function openLightbox(url) {
-        const modal = document.getElementById('lightboxModal');
-        const modalImg = document.getElementById('lightboxImg');
-        if (modal && modalImg) {
-            modalImg.src = url;
-            modal.style.display = 'flex';
-        }
-    }
-
-    // Uruchom po załadowaniu strony
-    document.addEventListener('DOMContentLoaded', () => {
-        loadHomePageData();
-        setupBookingForm();
-    });
-</script>
-</body>
-</html>
+                        <img src="${img.url}" alt="Realizacja CARSPA KATO" style="width: 100%; height: 240px; object-fit: cover; display: block; transition: transform 0.3s;" on
