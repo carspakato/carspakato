@@ -14,7 +14,6 @@ app.use(express.static(path.join(ROOT, "public")));
 
 const activeSessions = new Set();
 
-// Endpoint logowania
 app.post("/api/admin/login", (req, res) => {
   const { username, password } = req.body;
   const adminUser = process.env.ADMIN_USER || "admin";
@@ -47,10 +46,8 @@ app.post("/api/admin/logout", (req, res) => {
   res.json({ success: true });
 });
 
-// Formularz kontaktowy
 app.post("/api/contact", async (req, res) => {
   const { name, phone, email, service_id, message } = req.body;
-
   try {
     await resend.emails.send({
       from: 'CARSPA KATO <kontakt@carspakato.pl>',
