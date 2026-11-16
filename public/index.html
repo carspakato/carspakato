@@ -4,7 +4,6 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="CARSPA KATO – studio detailingu. Korekta lakieru, detailing wnętrza i powłoki ochronne.">
 <title>CARSPA KATO | Studio Detailingu</title>
-<link rel="icon" href="/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
@@ -26,12 +25,85 @@
         border-radius: 6px;
         box-shadow: 0 5px 25px rgba(0,0,0,0.8);
     }
+
+    /* Rozwijane menu Usługi u góry po kliknięciu */
+    .nav-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    .nav-dropdown-btn {
+        cursor: pointer;
+        user-select: none;
+    }
+    .nav-dropdown-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 12px);
+        left: 0;
+        min-width: 240px;
+        background: #141414;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 8px 0;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.85);
+        z-index: 1000;
+    }
+    .nav-dropdown-menu.show {
+        display: block;
+    }
+    .nav-dropdown-menu a {
+        display: block !important;
+        padding: 10px 18px !important;
+        color: #f0f0f0 !important;
+        text-decoration: none;
+        font-size: 14px;
+        border-bottom: 1px solid #222;
+        transition: background 0.2s, color 0.2s;
+    }
+    .nav-dropdown-menu a:last-child {
+        border-bottom: none;
+    }
+    .nav-dropdown-menu a:hover {
+        background: #202020;
+        color: #ccff00 !important;
+    }
+
+    /* Dopasowanie rozwijanego menu na telefonach */
+    @media (max-width: 820px) {
+        .nav-dropdown {
+            display: block;
+            width: 100%;
+        }
+        .nav-dropdown-menu {
+            position: static;
+            box-shadow: none;
+            border: none;
+            border-left: 2px solid #ccff00;
+            border-radius: 0;
+            margin: 6px 0 6px 12px;
+            padding: 0;
+            background: transparent;
+        }
+    }
 </style>
 </head>
 <body>
-<header class="topbar"><a class="brand" href="#"><span class="brand-mark">C</span><span>CARSPA <span class="lime">KATO</span><small>STUDIO DETAILINGU</small></span></a>
-<button class="menu-toggle" id="menuToggle" aria-label="Otwórz menu">☰</button>
-<nav id="nav"><a href="#uslugi">Usługi</a><a href="#cennik">Cennik</a><a href="#galeria">Galeria</a><a href="#kontakt">Kontakt</a><a class="nav-cta" href="#rezerwacja">Umów wizytę</a></nav></header>
+<header class="topbar">
+    <a class="brand" href="#"><span class="brand-mark">C</span><span>CARSPA <span class="lime">KATO</span><small>STUDIO DETAILINGU</small></span></a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Otwórz menu">☰</button>
+    <nav id="nav">
+        <div class="nav-dropdown" id="servicesDropdown">
+            <a href="#uslugi" class="nav-dropdown-btn" id="servicesDropdownBtn">Usługi ▾</a>
+            <div class="nav-dropdown-menu" id="servicesDropdownMenu">
+                <a href="#uslugi">Wszystkie usługi</a>
+            </div>
+        </div>
+        <a href="#cennik">Cennik</a>
+        <a href="#galeria">Galeria</a>
+        <a href="#kontakt">Kontakt</a>
+        <a class="nav-cta" href="#rezerwacja">Umów wizytę</a>
+    </nav>
+</header>
 <main>
 <section class="hero">
 <div class="hero-shade"></div><div class="hero-content"><p class="eyebrow">STUDIO DETAILINGU • KATOWICE I OKOLICE</p>
@@ -48,7 +120,6 @@
         <div><p class="eyebrow">EFEKTY NASZEJ PRACY</p><h2>GALERIA <span class="lime">REALIZACJI</span></h2></div>
         <p>Każdy detal ma znaczenie.</p>
     </div>
-    <!-- Zmienione id na "gallery" żeby pasowało do skryptów -->
     <div id="gallery" class="gallery-grid">
         <div class="gallery-empty">Wkrótce pojawią się tutaj zdjęcia naszych realizacji.</div>
     </div>
@@ -66,8 +137,52 @@
 
 <script src="/site.js"></script>
 <script>
-    // Automatyczne ładowanie galerii i ustawień kontaktowych na stronie głównej
+    // Obsługa rozwijania listy usług w górnym menu po kliknięciu
+    function setupServicesDropdown() {
+        const btn = document.getElementById('servicesDropdownBtn');
+        const menu = document.getElementById('servicesDropdownMenu');
+        if (!btn || !menu) return;
+
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            menu.classList.toggle('show');
+        });
+
+        // Zamknij menu po kliknięciu w dowolne inne miejsce na stronie
+        document.addEventListener('click', (e) => {
+            if (!menu.contains(e.target) && e.target !== btn) {
+                menu.classList.remove('show');
+            }
+        });
+    }
+
     async function loadHomePageData() {
+        // 0. Automatyczne wypełnienie rozwijanego menu usługami z panelu admina
+        try {
+            const res = await fetch('/api/services');
+            const services = await res.json();
+            const menu = document.getElementById('servicesDropdownMenu');
+            
+            if (menu && Array.isArray(services) && services.length > 0) {
+                const itemsHtml = services.map(s => {
+                    const title = s.title || s.name || 'Usługa';
+                    // Jeśli usługa ma przypisany link/url w bazie, użyje go; w przeciwnym razie przeniesie do sekcji #uslugi
+                    const href = s.url ? s.url : '#uslugi';
+                    return `<a href="${href}">${title}</a>`;
+                }).join('');
+
+                menu.innerHTML = itemsHtml + `<a href="#uslugi" style="color: #ccff00 !important; font-weight: 600;">Zobacz wszystkie →</a>`;
+                
+                // Zamykanie listy po kliknięciu w konkretną usługę
+                menu.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => menu.classList.remove('show'));
+                });
+            }
+        } catch (err) {
+            console.error("Błąd ładowania usług do menu:", err);
+        }
+
         // 1. Ładowanie galerii z Lightboxem
         try {
             const res = await fetch('/api/gallery');
@@ -85,7 +200,7 @@
             console.error("Błąd ładowania galerii:", err);
         }
 
-        // 2. Ładowanie ustawień kontaktowych (telefon, e-mail, adres)
+        // 2. Ładowanie ustawień kontaktowych
         try {
             const res = await fetch('/api/settings');
             const settings = await res.json();
@@ -181,8 +296,8 @@
         }
     }
 
-    // Uruchom po załadowaniu strony
     document.addEventListener('DOMContentLoaded', () => {
+        setupServicesDropdown();
         loadHomePageData();
         setupBookingForm();
     });
