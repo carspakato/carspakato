@@ -29,7 +29,7 @@
     <button class="menu-toggle" id="menuToggle" aria-label="Otwórz menu">☰</button>
     <nav id="nav">
         <div class="nav-dropdown" id="servicesDropdown">
-            <a href="/#uslugi" class="nav-dropdown-btn" id="servicesDropdownBtn" style="color: #f0f0f0; text-decoration: none;">Usługi ▾</a>
+            <span class="nav-dropdown-btn" id="servicesDropdownBtn" style="color: #f0f0f0; cursor: pointer;">Usługi ▾</span>
             <div class="nav-dropdown-menu" id="servicesDropdownMenu">
                 <a href="/detailing-zewnetrzny.html">Detailing zewnętrzny</a>
                 <a href="/detailing-wewnetrzny.html" style="color: #ccff00 !important;">Detailing wewnętrzny</a>
@@ -129,4 +129,15 @@
             e.stopPropagation(); 
             menu.classList.toggle('show'); 
         });
-        menu.
+        menu.querySelectorAll('a').forEach(link => { 
+            link.addEventListener('click', () => menu.classList.remove('show')); 
+        });
+        document.addEventListener('click', (e) => { 
+            if (!menu.contains(e.target) && e.target !== btn) { 
+                menu.classList.remove('show'); 
+            } 
+        });
+    }
+</script>
+</body>
+</html>
