@@ -17,14 +17,83 @@
 <div class="hero-shade"></div><div class="hero-content"><p class="eyebrow">STUDIO DETAILINGU • KATOWICE I OKOLICE</p>
 <h1>PERFEKCJA<br>W KAŻDYM <span class="lime">DETALU.</span></h1>
 <p class="hero-copy">Przywracamy blask. Podkreślamy charakter. Chronimy to, co wyróżnia Twój samochód.</p>
-<div class="hero-actions"><a class="btn primary" href="#rezerwacja">ZAREZERWUJ WIZYTĘ <span>↗</span></a><a class="btn outline" href="#uslugi">POZNAJ NASZE USŁUGI</a></div>
+<div class="hero-actions"><a class="btn primary" href="#rezerwacja">ZAREZERWUJ WIZYTĘ <span>↗️</span></a><a class="btn outline" href="#uslugi">POZNAJ NASZE USŁUGI</a></div>
 </div><div class="hero-stamp"><b>DETAIL</b><span>IS IN THE DETAILS</span></div></section>
 <section class="intro section"><div><p class="eyebrow">CARSPA KATO / JAKOŚĆ, KTÓRĄ WIDAĆ</p><h2>Twój samochód.<br><span class="lime">Nasza precyzja.</span></h2></div><p>Każdy lakier ma swoją historię. Naszym zadaniem jest wydobyć z niego to, co najlepsze – z dbałością o każdy detal i odpowiednio dobraną pielęgnacją.</p></section>
 <section class="section dark-section" id="uslugi"><div class="section-head"><div><p class="eyebrow">CO MOŻEMY DLA CIEBIE ZROBIĆ?</p><h2>NASZE <span class="lime">USŁUGI</span></h2></div><p>Kompleksowa pielęgnacja i ochrona samochodu.</p></div><div class="service-grid" id="services"></div></section>
 <section class="section prices" id="cennik"><div class="section-head"><div><p class="eyebrow">PRZEJRZYSTE ZASADY</p><h2>ORIENTACYJNY <span class="lime">CENNIK</span></h2></div><p>Ostateczna wycena zależy od stanu, wielkości i rodzaju lakieru.</p></div><div id="priceList" class="price-list"></div><p class="fineprint">Ceny mają charakter orientacyjny. Dokładną wycenę potwierdzimy po oględzinach samochodu.</p></section>
-<section class="section gallery-section" id="galeria"><div class="section-head"><div><p class="eyebrow">EFEKTY NASZEJ PRACY</p><h2>GALERIA <span class="lime">REALIZACJI</span></h2></div><p>Każdy detal ma znaczenie.</p></div><div id="gallery" class="gallery-grid"><div class="gallery-empty">Wkrótce pojawią się tutaj zdjęcia naszych realizacji.</div></div></section>
+
+<section class="section gallery-section" id="galeria">
+    <div class="section-head">
+        <div><p class="eyebrow">EFEKTY NASZEJ PRACY</p><h2>GALERIA <span class="lime">REALIZACJI</span></h2></div>
+        <p>Każdy detal ma znaczenie.</p>
+    </div>
+    <!-- Zmienione id na "gallery" żeby pasowało do skryptów -->
+    <div id="gallery" class="gallery-grid">
+        <div class="gallery-empty">Wkrótce pojawią się tutaj zdjęcia naszych realizacji.</div>
+    </div>
+</section>
+
 <section class="booking section" id="rezerwacja"><div class="booking-copy"><p class="eyebrow">ZACZNIJMY OD TWOJEGO AUTA</p><h2>UMÓW <span class="lime">WIZYTĘ</span></h2><p>Wypełnij formularz, a skontaktujemy się z Tobą, aby ustalić szczegóły i potwierdzić dogodny termin.</p></div>
-<form id="bookingForm" class="booking-form"><label>Imię *<input name="name" required placeholder="Jak się nazywasz?"></label><div class="form-row"><label>Numer telefonu *<input name="phone" required type="tel" placeholder="+48 ..."></label><label>Adres e-mail *<input name="email" type="email" placeholder="Adres e-mail"></label></div><label>Wybierz usługę *<select name="service_id" id="serviceSelect" required><option value="">Wybierz usługę</option></select></label><label>Dodatkowe informacje<textarea name="message" rows="3" placeholder="Marka i model auta, kolor, czego potrzebujesz?"></textarea></label><label class="consent"><input type="checkbox" name="consent" required> Wyrażam zgodę na kontakt w sprawie mojego zgłoszenia. *</label><button class="btn primary full" type="submit">WYŚLIJ ZGŁOSZENIE <span>↗</span></button><p class="form-message" id="formMessage" role="status"></p><small class="fineprint">Wysłanie formularza nie oznacza automatycznego potwierdzenia terminu.</small></form></section>
+<form id="bookingForm" class="booking-form"><label>Imię *<input name="name" required placeholder="Jak się nazywasz?"></label><div class="form-row"><label>Numer telefonu *<input name="phone" required type="tel" placeholder="+48 ..."></label><label>Adres e-mail *<input name="email" type="email" placeholder="Adres e-mail"></label></div><label>Wybierz usługę *<select name="service_id" id="serviceSelect" required><option value="">Wybierz usługę</option></select></label><label>Dodatkowe informacje<textarea name="message" rows="3" placeholder="Marka i model auta, kolor, czego potrzebujesz?"></textarea></label><label class="consent"><input type="checkbox" name="consent" required> Wyrażam zgodę na kontakt w sprawie mojego zgłoszenia. *</label><button class="btn primary full" type="submit">WYŚLIJ ZGŁOSZENIE <span>↗️</span></button><p class="form-message" id="formMessage" role="status"></p><small class="fineprint">Wysłanie formularza nie oznacza automatycznego potwierdzenia terminu.</small></form></section>
 <section class="contact section" id="kontakt"><div><p class="eyebrow">POROZMAWIAJMY O TWOIM AUCIE</p><h2>MASZ PYTANIA?<br><span class="lime">JESTEŚMY DO DYSPOZYCJI.</span></h2></div><div class="contact-details"><p><small>TELEFON</small><a id="contactPhone" href="tel:+48000000000">+48 000 000 000</a></p><p><small>E-MAIL</small><a id="contactEmail" href="mailto:kontakt@carspakato.pl">carspakato@gmail.com</a></p><p><small>OBSZAR DZIAŁANIA</small><span id="contactAddress">Katowice i okolice</span></p><div class="socials"><a id="instagram" href="https://www.instagram.com/carspa_kato" target="_blank" rel="noreferrer">INSTAGRAM </a><a id="facebook" href="https://www.facebook.com/profile.php?id=61583846130144&locale=pl_PL" target="_blank" rel="noreferrer">FACEBOOK </a></div></div></section>
-</main><footer><a class="brand" href="#"><span class="brand-mark">C</span><span>CARSPA <span class="lime">KATO</span><small>STUDIO DETAILINGU</small></span></a><span>© <span id="year"></span> CARSPA KATO. Wszelkie prawa zastrzeżone.</span><a href="/admin">Panel administratora</a></footer>
-<script src="/site.js"></script></body></html>
+</main><footer><a class="brand" href="#"><span class="brand-mark">C</span><span>CARSPA <span class="lime">KATO</span><small>STUDIO DETAILINGU</small></span></a><span>©️ <span id="year"></span> CARSPA KATO. Wszelkie prawa zastrzeżone.</span><a href="/admin.html">Panel administratora</a></footer>
+
+<script src="/site.js"></script>
+<script>
+    // Automatyczne ładowanie galerii i ustawień kontaktowych na stronie głównej
+    async function loadHomePageData() {
+        // 1. Ładowanie galerii
+        try {
+            const res = await fetch('/api/gallery');
+            const images = await res.json();
+            const grid = document.getElementById('gallery');
+            
+            if (images && images.length > 0) {
+                grid.innerHTML = images.map(img => `
+                    <div style="border-radius: 8px; overflow: hidden; background: #181818; border: 1px solid #333;">
+                        <img src="${img.url}" alt="Realizacja CARSPA KATO" style="width: 100%; height: 240px; object-fit: cover; display: block;">
+                    </div>
+                `).join('');
+            }
+        } catch (err) {
+            console.error("Błąd ładowania galerii:", err);
+        }
+
+        // 2. Ładowanie ustawień kontaktowych (telefon, e-mail, adres)
+        try {
+            const res = await fetch('/api/settings');
+            const settings = await res.json();
+            
+            if (settings) {
+                if (settings.phone) {
+                    const phoneEl = document.getElementById('contactPhone');
+                    if (phoneEl) {
+                        phoneEl.textContent = settings.phone;
+                        phoneEl.href = `tel:${settings.phone.replace(/\s+/g, '')}`;
+                    }
+                }
+                if (settings.email) {
+                    const emailEl = document.getElementById('contactEmail');
+                    if (emailEl) {
+                        emailEl.textContent = settings.email;
+                        emailEl.href = `mailto:${settings.email}`;
+                    }
+                }
+                if (settings.address) {
+                    const addressEl = document.getElementById('contactAddress');
+                    if (addressEl) {
+                        addressEl.textContent = settings.address;
+                    }
+                }
+            }
+        } catch (err) {
+            console.error("Błąd ładowania ustawień:", err);
+        }
+    }
+
+    // Uruchom po załadowaniu strony
+    document.addEventListener('DOMContentLoaded', loadHomePageData);
+</script>
+</body>
+</html>
