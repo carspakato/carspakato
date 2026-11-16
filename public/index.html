@@ -19,55 +19,79 @@
     </header>
 
     <section class="hero">
-        <h1>PROFESJONALNY DETAILING SAMOCHODOWY</h1>
-        <p>Twój samochód. Nasza precyzja. Perfekcja w każdym detalu.</p>
-        <a href="#kontakt" class="primary-btn">Zarezerwuj wizytę</a>
+        <h1>PERFEKCJA W KAŻDYM DETALU.</h1>
+        <p>Twój samochód. Nasza precyzja.</p>
+        <a href="#kontakt" class="primary-btn">UMÓW WIZYTĘ</a>
     </section>
 
     <section id="uslugi" class="section">
-        <h2>USŁUGI I CENNIK</h2>
+        <h2>NASZE USŁUGI</h2>
         <div class="services-grid">
             <div class="service-card">
-                <h3>Mycie Detailingowe</h3>
+                <h3>MYCIE + PAKIET WOSK</h3>
                 <p class="price">od 250 zł</p>
-                <p>Bezpieczne mycie ręczne, dekontaminacja lakieru oraz zabezpieczenie woskiem.</p>
+                <p>Bezpieczne mycie ręczne, osuszanie, wosk syntetyczny.</p>
             </div>
             <div class="service-card">
-                <h3>Korekta Lakieru</h3>
+                <h3>MYCIE + DETAILOWE WNĘTRZA</h3>
+                <p class="price">od 350 zł</p>
+                <p>Dokładne odkurzanie, czyszczenie plastików i szyb.</p>
+            </div>
+            <div class="service-card">
+                <h3>PAKIET KOMPLEKSOWY (WNĘTRZE + LAKIER)</h3>
+                <p class="price">od 600 zł</p>
+                <p>Pełne odświeżenie wnętrza oraz zabezpieczenie z zewnątrz.</p>
+            </div>
+            <div class="service-card">
+                <h3>KOREKTA LAKIERU</h3>
                 <p class="price">od 1200 zł</p>
-                <p>Wieloetapowe polerowanie usuwające zarysowania i przywracające głęboki połysk.</p>
+                <p>Usunięcie zarysowań, hologramów i przywrócenie lustrzanego blasku.</p>
             </div>
             <div class="service-card">
-                <h3>Powłoka Ceramiczna</h3>
+                <h3>POWŁOKA CERAMICZNA</h3>
                 <p class="price">od 1500 zł</p>
-                <p>Najwyższej klasy ochrona lakieru przed brudem, UV i mikro-zarysowaniami na lata.</p>
+                <p>Trwała ochrona lakieru przed chemią, UV i mikrorysami.</p>
             </div>
+            <div class="service-card">
+                <h3>ZABEZPIECZENIE ELEMENTÓW WNĘTRZA</h3>
+                <p class="price">od 300 zł</p>
+                <p>Impregnacja skórzanych tapicerek i elementów Black Piano.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="cennik" class="section">
+        <h2>ORIENTACYJNY CENNIK</h2>
+        <div class="pricing-list">
+            <div class="price-row"><span>Mycie detailingowe</span><span>od 250 zł</span></div>
+            <div class="price-row"><span>Korekta lakieru (wieloetapowa)</span><span>od 1200 zł</span></div>
+            <div class="price-row"><span>Powłoka ceramiczna</span><span>od 1500 zł</span></div>
+            <div class="price-row"><span>Pranie tapicerki kompleksowe</span><span>od 400 zł</span></div>
+            <div class="price-row"><span>Regeneracja reflektorów</span><span>od 200 zł</span></div>
         </div>
     </section>
 
     <section id="galeria" class="section" style="background: #161616;">
         <h2>GALERIA REALIZACJI</h2>
         <div class="gallery-grid">
-            <div class="service-card" style="text-align: center;">
-                <p style="color: #888;">Realizacja #1 – wkrótce zdjęcia</p>
-            </div>
-            <div class="service-card" style="text-align: center;">
-                <p style="color: #888;">Realizacja #2 – wkrótce zdjęcia</p>
-            </div>
+            <div class="service-card" style="text-align: center;"><p style="color: #888;">Realizacja #1 – wkrótce zdjęcia</p></div>
+            <div class="service-card" style="text-align: center;"><p style="color: #888;">Realizacja #2 – wkrótce zdjęcia</p></div>
         </div>
     </section>
 
     <section id="kontakt" class="section">
-        <h2>ZAREZERWUJ TERMIN</h2>
+        <h2>UMÓW WIZYTĘ</h2>
         <form id="contactForm" class="contact-form">
             <label>Imię i nazwisko <input name="name" required></label>
             <label>Telefon <input name="phone" required></label>
             <label>Adres e-mail <input name="email" type="email" required></label>
             <label>Wybierz usługę 
                 <select name="service_id">
-                    <option>Mycie Detailingowe</option>
-                    <option>Korekta Lakieru</option>
-                    <option>Powłoka Ceramiczna</option>
+                    <option>Mycie + Pakiet Wosk - od 250 zł</option>
+                    <option>Mycie + Detailowe Wnętrza - od 350 zł</option>
+                    <option>Pakiet Kompleksowy - od 600 zł</option>
+                    <option>Korekta Lakieru - od 1200 zł</option>
+                    <option>Powłoka Ceramiczna - od 1500 zł</option>
                 </select>
             </label>
             <label>Wiadomość / Preferowany termin <textarea name="message" placeholder="Napisz szczegóły..."></textarea></label>
