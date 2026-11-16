@@ -1,27 +1,55 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Obsługa menu mobilnego
   const menuToggle = document.querySelector("#menuToggle");
   const nav = document.querySelector("#nav");
   if (menuToggle && nav) {
     menuToggle.addEventListener("click", () => nav.classList.toggle("open"));
-    nav.querySelectorAll("a").forEach(a => 
-      a.addEventListener("click", () => nav.classList.remove("open"))
-    );
+    nav.querySelectorAll("a").forEach(a => {
+      if (!a.closest('.nav-dropdown')) {
+        a.addEventListener("click", () => nav.classList.remove("open"));
+      }
+    });
   }
 
+  // Obsługa rozwijanego menu "Usługi" na desktopie i mobile
+  const servicesDropdownBtn = document.getElementById('servicesDropdownBtn');
+  const servicesDropdownMenu = document.getElementById('servicesDropdownMenu');
+  if (servicesDropdownBtn && servicesDropdownMenu) {
+    servicesDropdownBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      servicesDropdownMenu.classList.toggle('show');
+    });
+
+    servicesDropdownMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        servicesDropdownMenu.classList.remove('show');
+        if (nav) nav.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!servicesDropdownMenu.contains(e.target) && e.target !== servicesDropdownBtn) {
+        servicesDropdownMenu.classList.remove('show');
+      }
+    });
+  }
+
+  // Rok w stopce
   const yearEl = document.querySelector("#year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // Główne usługi odpowiadające podstronom i formularzowi
+  // Definicja 6 głównych usług do kafelków na stronie głównej
   const services = [
-    { id: 1, name: "Detailing zewnętrzny", description: "Kompleksowe, bezpieczne mycie i wieloetapowe odświeżenie karoserii.", link: "/detailing-zewnetrzny.html" },
-    { id: 2, name: "Detailing wewnętrzny", description: "Dogłębne czyszczenie kabiny, pranie tapicerki i impregnacja.", link: "/detailing-wewnetrzny.html" },
-    { id: 3, name: "Korekty lakieru", description: "Usuwanie rys, hologramów i przywracanie głębokiego połysku.", link: "/korekty-lakieru.html" },
-    { id: 4, name: "Ochrona lakieru", description: "Powłoki ceramiczne i grafenowe zabezpieczające lakier.", link: "/ochrona-lakieru.html" },
-    { id: 5, name: "Zabezpieczenie lakieru", description: "Folie ochronne bezbarwne lub kolorowe z 10-letnią gwarancją.", link: "/zabezpieczenie-lakieru.html" },
-    { id: 6, name: "Zmiana koloru auta", description: "Folie PPF kolorowe oraz folie winylowe (wrapy) + stylizacja wnętrza.", link: "/zmiana-koloru-auta.html" }
+    { name: "Detailing zewnętrzny", description: "Kompleksowe, bezpieczne mycie i wieloetapowe odświeżenie karoserii.", link: "/detailing-zewnetrzny.html" },
+    { name: "Detailing wewnętrzny", description: "Dogłębne czyszczenie kabiny, pranie tapicerki i impregnacja.", link: "/detailing-wewnetrzny.html" },
+    { name: "Korekty lakieru", description: "Usuwanie rys, hologramów i przywracanie głębokiego połysku.", link: "/korekty-lakieru.html" },
+    { name: "Ochrona lakieru", description: "Powłoki ceramiczne i grafenowe zabezpieczające lakier.", link: "/ochrona-lakieru.html" },
+    { name: "Zabezpieczenie lakieru", description: "Folie ochronne bezbarwne lub kolorowe z 10-letnią gwarancją.", link: "/zabezpieczenie-lakieru.html" },
+    { name: "Zmiana koloru auta", description: "Folie PPF kolorowe oraz folie winylowe (wrapy) + stylizacja wnętrza.", link: "/zmiana-koloru-auta.html" }
   ];
 
-  // Przywrócenie kafelków usług na stronie głównej
+  // Renderowanie kafelków usług na stronie głównej
   const servicesContainer = document.querySelector("#services");
   if (servicesContainer) {
     servicesContainer.innerHTML = services.map(s => `
@@ -33,6 +61,54 @@ document.addEventListener("DOMContentLoaded", () => {
     `).join("");
   }
 
+  // Pobieranie danych galerii i ustawień kontaktowych
+  async function loadHomePageData() {
+    try {
+      const res = await fetch('/api/gallery');
+      const images = await res.json();
+      const grid = document.getElementById('gallery');
+      if (grid && images && images.length > 0) {
+        grid.innerHTML = images.map(img => `
+          <div style="border-radius: 8px; overflow: hidden; background: #181818; border: 1px solid #333; cursor: pointer;" onclick="openLightbox('${img.url}')">
+            <img src="${img.url}" alt="Realizacja CARSPA KATO" style="width: 100%; height: 240px; object-fit: cover; display: block;">
+          </div>
+        `).join('');
+      }
+    } catch (err) {
+      console.error("Błąd ładowania galerii:", err);
+    }
+
+    try {
+      const res = await fetch('/api/settings');
+      const settings = await res.json();
+      if (settings) {
+        if (settings.phone) {
+          const phoneEl = document.getElementById('contactPhone');
+          if (phoneEl) {
+            phoneEl.textContent = settings.phone;
+            phoneEl.href = `tel:${settings.phone.replace(/\s+/g, '')}`;
+          }
+        }
+        if (settings.email) {
+          const emailEl = document.getElementById('contactEmail');
+          if (emailEl) {
+            emailEl.textContent = settings.email;
+            emailEl.href = `mailto:${settings.email}`;
+          }
+        }
+        if (settings.address) {
+          const addressEl = document.getElementById('contactAddress');
+          if (addressEl) addressEl.textContent = settings.address;
+        }
+      }
+    } catch (err) {
+      console.error("Błąd ładowania ustawień:", err);
+    }
+  }
+
+  loadHomePageData();
+
+  // Obsługa formularza rezerwacji
   const bookingForm = document.querySelector("#bookingForm");
   if (bookingForm) {
     bookingForm.addEventListener("submit", async e => {
