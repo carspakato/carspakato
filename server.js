@@ -17,6 +17,19 @@ app.use(express.static(path.join(ROOT, "public")));
 // Pamięć sesji administratora
 const activeSessions = new Set();
 
+// Przechowywanie danych w pamięci (galeria, usługi, ustawienia, rezerwacje)
+let galleryDB = [];
+let servicesDB = [
+  { id: 1, name: "Mycie detailingowe", price: "250 zł", description: "Dokładne mycie ręczne", duration: "2h" },
+  { id: 2, name: "Korekta lakieru", price: "1200 zł", description: "Usuwanie rys i polerowanie", duration: "2 dni" }
+];
+let bookingsDB = [];
+let settingsDB = {
+  phone: "+48 000 000 000",
+  email: "kontakt@carspakato.pl",
+  address: "Katowice, Polska"
+};
+
 // Automatyczne utworzenie folderu uploads
 const uploadDir = path.join(ROOT, "public", "uploads");
 if (!fs.existsSync(uploadDir)){
@@ -68,6 +81,15 @@ app.post("/api/admin/logout", (req, res) => {
   res.json({ success: true });
 });
 
+// --- DANE PUBLICZNE I STRONY ---
+app.get("/api/public-data", (req, res) => {
+  res.json({
+    gallery: galleryDB,
+    services: servicesDB,
+    settings: settingsDB
+  });
+});
+
 // Formularz kontaktowy
 app.post("/api/contact", async (req, res) => {
   const { name, phone, email, service_id, message } = req.body;
@@ -86,29 +108,64 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-// Endpoint galerii
+// --- GALERIA ADMINA ---
 app.post("/api/admin/gallery", upload.single('photo'), (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: "Nie przesłano pliku." });
     }
-    res.json({ success: true, message: "Dodano zdjęcie." });
+    const newPhoto = {
+      id: Date.now().toString(),
+      filename: req.file.filename,
+      caption: req.body.caption || ""
+    };
+    galleryDB.unshift(newPhoto); // Dodaj na początek listy
+    res.json({ success: true, message: "Dodano zdjęcie.", photo: newPhoto });
   } catch (err) {
     res.status(500).json({ error: "Błąd serwera." });
   }
 });
 
-// Tymczasowe/przykładowe endpointy danych publicznych, jeśli nie były zdefiniowane
-app.get("/api/public-data", (req, res) => {
-  res.json({ gallery: [], settings: { phone: "", email: "", address: "" } });
+app.delete("/api/admin/gallery/:id", (req, res) => {
+  const photoId = req.params.id;
+  galleryDB = galleryDB.filter(g => g.id !== photoId);
+  res.json({ success: true });
 });
 
+// --- USŁUGI I REZERWACJE ---
 app.get("/api/admin/services", (req, res) => {
-  res.json([]);
+  res.json(servicesDB);
+});
+
+app.post("/api/admin/services", (req, res) => {
+  const newService = { id: Date.now(), ...req.body };
+  servicesDB.push(newService);
+  res.json({ success: true, service: newService });
+});
+
+app.put("/api/admin/services/:id", (req, res) => {
+  const id = Number(req.params.id);
+  servicesDB = servicesDB.map(s => s.id === id ? { ...s, ...req.body } : s);
+  res.json({ success: true });
+});
+
+app.delete("/api/admin/services/:id", (req, res) => {
+  const id = Number(req.params.id);
+  servicesDB = servicesDB.filter(s => s.id !== id);
+  res.json({ success: true });
 });
 
 app.get("/api/admin/bookings", (req, res) => {
-  res.json([]);
+  res.json(bookingsDB);
+});
+
+app.patch("/api/admin/bookings/:id", (req, res) => {
+  res.json({ success: true });
+});
+
+app.put("/api/admin/settings", (req, res) => {
+  settingsDB = { ...settingsDB, ...req.body };
+  res.json({ success: true });
 });
 
 app.get("*", (req, res) => {
