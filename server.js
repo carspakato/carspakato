@@ -14,7 +14,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(ROOT, "public")));
 
-// Sprawdzenie i automatyczne utworzenie folderu uploads, jeśli go nie ma
+// Prosta pamięć sesji admina w pamięci serwera
+const activeSessions = new Set();
+
+// Automatyczne utworzenie folderu uploads, jeśli go nie ma
 const uploadDir = path.join(ROOT, "public", "uploads");
 if (!fs.existsSync(uploadDir)){
     fs.mkdirSync(uploadDir, { recursive: true });
@@ -31,6 +34,40 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage: storage });
+
+// --- AUTORYZACJA ADMINA ---
+app.post("/api/admin/login", (req, res) => {
+  const { username, password } = req.body;
+  const adminUser = process.env.ADMIN_USER || "admin";
+  const adminPass = process.env.ADMIN_PASS || "admin123";
+
+  if (username === adminUser && password === adminPass) {
+    const token = Math.random().toString(36).substring(2);
+    activeSessions.add(token);
+    // Ustawiamy ciasteczko sesji
+    res.setHeader('Set-Cookie', `admin_token=${token}; Path=/; HttpOnly; SameSite=Strict`);
+    res.json({ success: true, email: adminUser });
+  } else {
+    res.status(401).json({ error: "Nieprawidłowy login lub hasło." });
+  }
+});
+
+app.get("/api/admin/me", (req, res) => {
+  const cookie = req.headers.cookie || "";
+  const tokenMatch = cookie.split('; ').find(row => row.startsWith('admin_token='));
+  const token = tokenMatch ? tokenMatch.split('=')[1] : null;
+
+  if (token && activeSessions.has(token)) {
+    res.json({ email: process.env.ADMIN_USER || "admin" });
+  } else {
+    res.status(401).json({ error: "Brak autoryzacji." });
+  }
+});
+
+app.post("/api/admin/logout", (req, res) => {
+  res.setHeader('Set-Cookie', 'admin_token=; Path=/; Max-Age=0');
+  res.json({ success: true });
+});
 
 // Formularz kontaktowy
 app.post("/api/contact", async (req, res) => {
@@ -50,7 +87,7 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-// Endpoint galerii w panelu admina (odbiera plik pod kluczem 'photo')
+// Endpoint galerii w panelu admina (chroniony prostym sprawdzeniem sesji)
 app.post("/api/admin/gallery", upload.single('photo'), (req, res) => {
   try {
     if (!req.file) {
