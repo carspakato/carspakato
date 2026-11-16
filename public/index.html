@@ -96,7 +96,7 @@
             <span class="nav-dropdown-btn" id="servicesDropdownBtn" style="color: #f0f0f0; cursor: pointer;">Usługi ▾</span>
             <div class="nav-dropdown-menu" id="servicesDropdownMenu">
                 <a href="/detailing-zewnetrzny.html">Detailing zewnętrzny</a>
-                <a href="/detailing-wnetrzny.html">Detailing wewnętrzny</a>
+                <a href="/detailing-wewnetrzny.html">Detailing wewnętrzny</a>
                 <a href="/korekty-lakieru.html">Korekty lakieru</a>
                 <a href="/ochrona-lakieru.html">Ochrona lakieru</a>
                 <a href="/zabezpieczenie-lakieru.html">Zabezpieczenie lakieru</a>
@@ -119,7 +119,38 @@
 </div><div class="hero-stamp"><b>DETAIL</b><span>IS IN THE DETAILS</span></div></section>
 <section class="intro section"><div><p class="eyebrow">CARSPA KATO / JAKOŚĆ, KTÓRĄ WIDAĆ</p><h2>Twój samochód.<br><span class="lime">Nasza precyzja.</span></h2></div><p>Każdy lakier ma swoją historię. Naszym zadaniem jest wydobyć z niego to, co najlepsze – z dbałością o każdy detal i odpowiednio dobraną pielęgnacją.</p></section>
 <section class="section dark-section" id="uslugi"><div class="section-head"><div><p class="eyebrow">CO MOŻEMY DLA CIEBIE ZROBIĆ?</p><h2>NASZE <span class="lime">USŁUGI</span></h2></div><p>Kompleksowa pielęgnacja i ochrona samochodu.</p></div><div class="service-grid" id="services"></div></section>
-<section class="section prices" id="cennik"><div class="section-head"><div><p class="eyebrow">PRZEJRZYSTE ZASADY</p><h2>ORIENTACYJNY <span class="lime">CENNIK</span></h2></div><p>Ostateczna wycena zależy od stanu, wielkości i rodzaju lakieru.</p></div><div id="priceList" class="price-list"></div><p class="fineprint">Ceny mają charakter orientacyjny. Dokładną wycenę potwierdzimy po oględzinach samochodu.</p></section>
+
+<!-- Nowa sekcja zastępująca cennik -->
+<section id="cennik" class="section" style="background: #121212; border-top: 1px solid #222; border-bottom: 1px solid #222;">
+    <div style="max-width: 900px; margin: 0 auto; text-align: center;">
+        <p class="eyebrow">INDYWIDUALNE PODEJŚCIE • STANDARD VIP</p>
+        <h2 style="font-size: 38px; margin-bottom: 24px;">JAK <span class="lime">PODCHODZIMY</span> DO SAMOCHODU?</h2>
+        <p style="color: #ccc; font-size: 17px; line-height: 1.7; margin-bottom: 40px;">
+            W CARSPA KATO każdy pojazd traktujemy z najwyższą starannością i atencją. Nie idziemy na skróty – dopasowujemy się do Twoich potrzeb czasowych i robimy wszystko, aby każdy klient był traktowany jak klient VIP.
+        </p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; text-align: left;">
+            <div style="background: #181818; border: 1px solid #333; border-radius: 8px; padding: 28px;">
+                <h4 style="color: #ccff00; margin-bottom: 12px; font-size: 18px;">🚗 Usługa Door-to-Door</h4>
+                <p style="color: #bbb; font-size: 14px; line-height: 1.6; margin: 0;">
+                    Szukasz oszczędności czasu? Oferujemy odbiór Twojego samochodu spod wskazanego adresu i dostarczenie go z powrotem po zakończonej usłudze w nienagannym stanie.
+                </p>
+            </div>
+            <div style="background: #181818; border: 1px solid #333; border-radius: 8px; padding: 28px;">
+                <h4 style="color: #ccff00; margin-bottom: 12px; font-size: 18px;">⏰ Elastyczność Czasowa</h4>
+                <p style="color: #bbb; font-size: 14px; line-height: 1.6; margin: 0;">
+                    Jesteśmy w stanie dopasować się do Twoich indywidualnych potrzeb czasowych. Ustalamy terminy dogodne dla Twojego harmonogramu.
+                </p>
+            </div>
+            <div style="background: #181818; border: 1px solid #333; border-radius: 8px; padding: 28px;">
+                <h4 style="color: #ccff00; margin-bottom: 12px; font-size: 18px;">⭐ Standard VIP</h4>
+                <p style="color: #bbb; font-size: 14px; line-height: 1.6; margin: 0;">
+                    Robimy wszystko co w naszej mocy, aby sprostać najwyższym wymaganiom – profesjonalne doradztwo, bezkompromisowa jakość i pełne zaangażowanie.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
 
 <section class="section gallery-section" id="galeria">
     <div class="section-head">
@@ -144,142 +175,4 @@
 <script src="/site.js"></script>
 <script>
     function setupServicesDropdown() {
-        const btn = document.getElementById('servicesDropdownBtn');
-        const menu = document.getElementById('servicesDropdownMenu');
-        if (!btn || !menu) return;
-
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            menu.classList.toggle('show');
-        });
-
-        menu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => menu.classList.remove('show'));
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!menu.contains(e.target) && e.target !== btn) {
-                menu.classList.remove('show');
-            }
-        });
-    }
-
-    async function loadHomePageData() {
-        try {
-            const res = await fetch('/api/gallery');
-            const images = await res.json();
-            const grid = document.getElementById('gallery');
-            
-            if (images && images.length > 0) {
-                grid.innerHTML = images.map(img => `
-                    <div style="border-radius: 8px; overflow: hidden; background: #181818; border: 1px solid #333; cursor: pointer;" onclick="openLightbox('${img.url}')">
-                        <img src="${img.url}" alt="Realizacja CARSPA KATO" style="width: 100%; height: 240px; object-fit: cover; display: block; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
-                    </div>
-                `).join('');
-            }
-        } catch (err) {
-            console.error("Błąd ładowania galerii:", err);
-        }
-
-        try {
-            const res = await fetch('/api/settings');
-            const settings = await res.json();
-            
-            if (settings) {
-                if (settings.phone) {
-                    const phoneEl = document.getElementById('contactPhone');
-                    if (phoneEl) {
-                        phoneEl.textContent = settings.phone;
-                        phoneEl.href = `tel:${settings.phone.replace(/\s+/g, '')}`;
-                    }
-                }
-                if (settings.email) {
-                    const emailEl = document.getElementById('contactEmail');
-                    if (emailEl) {
-                        emailEl.textContent = settings.email;
-                        emailEl.href = `mailto:${settings.email}`;
-                    }
-                }
-                if (settings.address) {
-                    const addressEl = document.getElementById('contactAddress');
-                    if (addressEl) {
-                        addressEl.textContent = settings.address;
-                    }
-                }
-            }
-        } catch (err) {
-            console.error("Błąd ładowania ustawień:", err);
-        }
-    }
-
-    function setupBookingForm() {
-        const form = document.getElementById('bookingForm');
-        const formMessage = document.getElementById('formMessage');
-
-        if (!form) return;
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(form);
-            const data = {
-                name: formData.get('name'),
-                phone: formData.get('phone'),
-                email: formData.get('email'),
-                service_id: formData.get('service_id') || 'Brak wybranej usługi',
-                message: formData.get('message')
-            };
-
-            if (formMessage) {
-                formMessage.textContent = "Wysyłanie zgłoszenia...";
-                formMessage.style.color = "#ccff00";
-            }
-
-            try {
-                const response = await fetch('/api/contact', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-
-                if (response.ok && result.success) {
-                    if (formMessage) {
-                        formMessage.textContent = "Zgłoszenie zostało wysłane pomyślnie! Skontaktujemy się wkrótce.";
-                        formMessage.style.color = "#ccff00";
-                    }
-                    form.reset();
-                } else {
-                    if (formMessage) {
-                        formMessage.textContent = result.message || "Błąd podczas wysyłania. Spróbuj ponownie.";
-                        formMessage.style.color = "#ff4d4d";
-                    }
-                }
-            } catch (err) {
-                if (formMessage) {
-                    formMessage.textContent = "Błąd połączenia z serwerem.";
-                    formMessage.style.color = "#ff4d4d";
-                }
-            }
-        });
-    }
-
-    function openLightbox(url) {
-        const modal = document.getElementById('lightboxModal');
-        const modalImg = document.getElementById('lightboxImg');
-        if (modal && modalImg) {
-            modalImg.src = url;
-            modal.style.display = 'flex';
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        setupServicesDropdown();
-        loadHomePageData();
-        setupBookingForm();
-    });
-</script>
-</body>
-</html>
+        const btn = document.
