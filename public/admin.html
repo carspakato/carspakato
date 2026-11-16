@@ -48,12 +48,10 @@
         .logout-btn { background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; transition: all 0.3s; }
         .logout-btn:hover { background: #ff4d4d; color: #fff; }
 
-        /* Style dla tabel i galerii w panelu */
         .admin-gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
         .admin-gallery-item { background: #121212; border: 1px solid #2a2a2a; padding: 10px; border-radius: 6px; text-align: center; }
         .admin-gallery-item img { width: 100%; height: 140px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; }
         .btn-danger { background: #ff4d4d; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
-        
         .upload-box { border: 2px dashed #333; padding: 25px; border-radius: 6px; text-align: center; margin-bottom: 20px; background: #121212; }
     </style>
 </head>
@@ -69,7 +67,7 @@
             <h2 class="section-title">Logowanie</h2>
             <form id="loginForm">
                 <div class="form-group">
-                    <label>Login / Adres e-mail</label>
+                    <label>Login</label>
                     <input type="text" id="username" required placeholder="Wpisz login...">
                 </div>
                 <div class="form-group">
@@ -82,7 +80,7 @@
         </div>
     </div>
 
-    <!-- Panel Administratora (widoczny po zalogowaniu) -->
+    <!-- Panel Administratora -->
     <div id="adminSection" class="admin-container">
         <div class="admin-topbar">
             <div class="brand-header" style="margin-bottom:0;">
@@ -93,10 +91,19 @@
         </div>
 
         <div class="admin-nav">
-            <button class="tab-btn active" onclick="switchTab('reservations')">Rezerwacje</button>
-            <button class="tab-btn" onclick="switchTab('gallery')">Galeria zdjęć</button>
+            <button class="tab-btn active" onclick="switchTab('reservations', event)">Rezerwacje</button>
+            <button class="tab-btn" onclick="switchTab('gallery', event)">Galeria zdjęć</button>
         </div>
 
-        <!-- Zakładka: Rezerwacje -->
         <div id="tab-reservations" class="tab-content active">
-            <h2 class="section-title">Zar
+            <h2 class="section-title">Zarządzanie rezerwacjami</h2>
+            <p style="color: #888; font-size: 14px;">Tutaj pojawią się zgłoszenia wysłane przez formularz.</p>
+            <div id="reservationsList" style="margin-top: 20px;">Brak nowych rezerwacji.</div>
+        </div>
+
+        <div id="tab-gallery" class="tab-content">
+            <h2 class="section-title">Galeria zdjęć realizacji</h2>
+            <div class="upload-box">
+                <form id="uploadForm">
+                    <input type="file" id="imageInput" name="image" accept="image/*" required style="margin-bottom: 15px; color: #aaa;"><br>
+                    <button type="submit" class="btn
