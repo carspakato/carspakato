@@ -1,6 +1,8 @@
 const express = require('express');
 const { Resend } = require('resend');
 const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,7 +14,39 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(ROOT, "public")));
 
+// Upewnij się, że katalog na wgrywane zdjęcia istnieje
+const uploadDir = path.join(ROOT, "public", "uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Konfiguracja Multer do zapisywania przesyłanych zdjęć
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+const upload = multer({ storage });
+
+// Tablica przechowująca zdjęcia galerii
+let galleryImages = [];
+
 const activeSessions = new Set();
+
+// Middleware do sprawdzania autoryzacji admina
+function requireAdmin(req, res, next) {
+  const cookie = req.headers.cookie || "";
+  const tokenMatch = cookie.split('; ').find(row => row.startsWith('admin_token='));
+  const token = tokenMatch ? tokenMatch.split('=')[1] : null;
+
+  if (token && activeSessions.has(token)) {
+    next();
+  } else {
+    res.status(401).json({ error: "Brak autoryzacji." });
+  }
+}
 
 app.post("/api/admin/login", (req, res) => {
   const { username, password } = req.body;
@@ -46,6 +80,43 @@ app.post("/api/admin/logout", (req, res) => {
   res.json({ success: true });
 });
 
+// --- API GALERIA ---
+app.get("/api/gallery", (req, res) => {
+  res.json(galleryImages);
+});
+
+app.post("/api/admin/gallery", requireAdmin, upload.single('image'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "Nie przesłano pliku." });
+    }
+    const imageUrl = `/uploads/${req.file.filename}`;
+    const newImage = { id: Date.now(), url: imageUrl };
+    galleryImages.push(newImage);
+    res.json({ success: true, image: newImage });
+  } catch (err) {
+    console.error("Błąd wgrywania zdjęcia:", err);
+    res.status(500).json({ error: "Błąd serwera podczas zapisu zdjęcia." });
+  }
+});
+
+app.delete("/api/admin/gallery/:id", requireAdmin, (req, res) => {
+  const id = Number(req.params.id);
+  const index = galleryImages.findIndex(img => img.id === id);
+  if (index !== -1) {
+    const img = galleryImages[index];
+    const filePath = path.join(ROOT, "public", img.url);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+    galleryImages.splice(index, 1);
+    res.json({ success: true });
+  } else {
+    res.status(404).json({ error: "Nie znaleziono zdjęcia." });
+  }
+});
+
+// --- KONTAKT ---
 app.post("/api/contact", async (req, res) => {
   const { name, phone, email, service_id, message } = req.body;
   try {
