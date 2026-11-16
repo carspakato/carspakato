@@ -34,6 +34,9 @@ app.get('/api/services', (req, res) => {
 });
 
 app.post('/api/contact', async (req, res) => {
+  console.log("==> ODEBRANO ŻĄDANIE KONTAKTOWE Z FORMULARZA <==");
+  console.log("Dane:", req.body);
+
   const { name, phone, email, service_id, message } = req.body;
 
   try {
@@ -47,7 +50,7 @@ app.post('/api/contact', async (req, res) => {
     console.log("E-mail wysłany pomyślnie przez Resend:", data);
     res.json({ success: true, message: "Zgłoszenie zostało wysłane pomyślnie!" });
   } catch (err) {
-    console.error("Błąd wysyłania e-maila przez Resend:", err);
+    console.error("==> BŁĄD WYSYŁANIA E-MAILA PRZEZ RESEND <==", err);
     res.status(500).json({ success: false, message: "Nie udało się wysłać wiadomości e-mail." });
   }
 });
@@ -57,5 +60,5 @@ app.get("*", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`CARSPA KATO działa na: http://localhost:${PORT}`);
+  console.log(`CARSPA KATO działa na porcie ${PORT}`);
 });
