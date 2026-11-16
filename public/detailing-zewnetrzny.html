@@ -1,10 +1,12 @@
 <!doctype html>
 <html lang="pl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Detailing zewnętrzny Katowice – wieloetapowe mycie detailingowe, dekontaminacja lakieru, czyszczenie felg i zabezpieczenie w CARSPA KATO.">
 <title>Detailing Zewnętrzny | CARSPA KATO</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 <style>
@@ -27,10 +29,10 @@
     <button class="menu-toggle" id="menuToggle" aria-label="Otwórz menu">☰</button>
     <nav id="nav">
         <div class="nav-dropdown" id="servicesDropdown">
-            <a href="/#uslugi" class="nav-dropdown-btn" id="servicesDropdownBtn">Usługi ▾</a>
+            <span class="nav-dropdown-btn" id="servicesDropdownBtn" style="color: #f0f0f0; cursor: pointer;">Usługi ▾</span>
             <div class="nav-dropdown-menu" id="servicesDropdownMenu">
                 <a href="/detailing-zewnetrzny.html" style="color: #ccff00 !important;">Detailing zewnętrzny</a>
-                <a href="/detailing-wnetrzny.html">Detailing wewnętrzny</a>
+                <a href="/detailing-wewnetrzny.html">Detailing wewnętrzny</a>
                 <a href="/korekty-lakieru.html">Korekty lakieru</a>
                 <a href="/ochrona-lakieru.html">Ochrona lakieru</a>
                 <a href="/zabezpieczenie-lakieru.html">Zabezpieczenie lakieru</a>
@@ -117,4 +119,15 @@
     document.getElementById('year').textContent = new Date().getFullYear();
     const menuToggle = document.getElementById('menuToggle');
     const nav = document.getElementById('nav');
-    if (menuToggle && nav) { menuToggle.addEventListener
+    if (menuToggle && nav) { menuToggle.addEventListener('click', () => nav.classList.toggle('open')); }
+    
+    const btn = document.getElementById('servicesDropdownBtn');
+    const menu = document.getElementById('servicesDropdownMenu');
+    if (btn && menu) {
+        btn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); menu.classList.toggle('show'); });
+        menu.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => menu.classList.remove('show')); });
+        document.addEventListener('click', (e) => { if (!menu.contains(e.target) && e.target !== btn) { menu.classList.remove('show'); } });
+    }
+</script>
+</body>
+</html>
