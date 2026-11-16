@@ -18,8 +18,9 @@ const activeSessions = new Set();
 
 let galleryDB = [];
 let servicesDB = [
-  { id: 1, name: "Mycie detailingowe", price: "250 zł", description: "Dokładne mycie ręczne", duration: "2h" },
-  { id: 2, name: "Korekta lakieru", price: "1200 zł", description: "Usuwanie rys i polerowanie", duration: "2 dni" }
+  { id: 1, name: "Mycie detailingowe", price: "od 250 zł", description: "Dokładne mycie ręczne", duration: "2h" },
+  { id: 2, name: "Korekta lakieru", price: "od 1200 zł", description: "Usuwanie rys i polerowanie", duration: "2 dni" },
+  { id: 3, name: "Pranie kompleksowe tapicerki", price: "od 400 zł", description: "Głębokie czyszczenie", duration: "1 dzień" }
 ];
 let bookingsDB = [];
 let settingsDB = {
@@ -88,8 +89,8 @@ app.post("/api/contact", async (req, res) => {
     await resend.emails.send({
       from: 'CARSPA KATO <kontakt@carspakato.pl>',
       to: "kontakt@carspakato.pl",
-      subject: `Nowe zgłoszenie z formularza: ${name || "Klient"}`,
-      text: `Nowe zgłoszenie:\n\nImię: ${name}\nTelefon: ${phone}\nE-mail: ${email}\nUsługa: ${service_id}\nWiadomość: ${message}`
+      subject: `Nowa rezerwacja/zgłoszenie: ${name || "Klient"}`,
+      text: `Nowe zgłoszenie ze strony:\n\nImię: ${name}\nTelefon: ${phone}\nE-mail: ${email}\nWybrana usługa: ${service_id}\nWiadomość: ${message}`
     });
     res.json({ success: true, message: "Wysłano pomyślnie!" });
   } catch (err) {
