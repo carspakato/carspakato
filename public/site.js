@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const services = [
     { id: 1, name: "Detailing zewnętrzny podstawowe", description: "Dokładne, bezpieczne mycie wstępne i właściwe.", price: "od 200 zł", duration: "2-3 godz." },
-    { id: 2, name: "Detailing zewnętrzny full", description: "Dokładne czyszczenie i pielęgnacja elementów wnętrza.", price: "od 300 zł", duration: "4-6 godz." },
+    { id: 2, name: "Detailing full", description: "Dokładne czyszczenie i pielęgnacja elementów wnętrza.", price: "od 300 zł", duration: "4-6 godz." },
     { id: 3, name: "Detailing wewnętrzny dopasowany do potrzeb klienta", description: "Szybkie odświeżenie i odkurzenie kabiny.", price: "od 100 zł", duration: "1-2 godz." },
     { id: 4, name: "Pranie kompleksowe tapicerki", description: "Głębokie czyszczenie wszystkich elementów materiałowych.", price: "od 400 zł", duration: "1 dzień" },
     { id: 5, name: "Korekty lakieru", description: "Odświeżenie lakieru, usunięcie rys i poprawa połysku.", price: "od 600 zł", duration: "1 dzień" },
