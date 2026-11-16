@@ -1,69 +1,63 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const res = await fetch('/api/public-data');
-    const data = await res.json();
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CARSPA KATO | Studio Detailingu</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo">CARSPA KATO</div>
+        <nav class="main-nav">
+            <a href="#uslugi">Usługi</a>
+            <a href="#galeria">Galeria</a>
+            <a href="#kontakt">Kontakt</a>
+            <a href="/admin.html" class="admin-link">Panel Admina</a>
+        </nav>
+    </header>
 
-    const galleryContainer = document.querySelector('#galleryGrid');
-    if (galleryContainer) {
-      if (data.gallery && data.gallery.length > 0) {
-        galleryContainer.innerHTML = data.gallery.map(g => `
-          <div class="gallery-item">
-            <img src="/uploads/${encodeURIComponent(g.filename)}" alt="${g.caption || 'Realizacja'}">
-            ${g.caption ? `<p>${g.caption}</p>` : ''}
-          </div>
-        `).join('');
-      } else {
-        galleryContainer.innerHTML = '<p class="muted">Wkrótce pojawią się tutaj zdjęcia naszych realizacji.</p>';
-      }
-    }
+    <section class="hero">
+        <h1>PROFESJONALNY DETAILING SAMOCHODOWY</h1>
+        <p>Zadbaj o swój samochód na najwyższym poziomie w Katowicach.</p>
+        <a href="#kontakt" class="primary-btn">Zarezerwuj wizytę</a>
+    </section>
 
-    const servicesContainer = document.querySelector('#servicesPublicGrid');
-    const serviceSelect = document.querySelector('#contactServiceSelect');
+    <section id="uslugi" class="section">
+        <h2>USŁUGI I CENNIK</h2>
+        <div id="servicesPublicGrid" class="services-grid">
+            <p class="muted">Ładowanie usług...</p>
+        </div>
+    </section>
 
-    if (data.services && data.services.length > 0) {
-      if (servicesContainer) {
-        servicesContainer.innerHTML = data.services.map(s => `
-          <div class="service-card">
-            <h3>${s.name}</h3>
-            <p class="price">${s.price}</p>
-            <p>${s.description || ''}</p>
-            <span class="duration muted">Czas: ${s.duration || 'ustalany indywidualnie'}</span>
-          </div>
-        `).join('');
-      }
+    <section id="galeria" class="section dark-bg">
+        <h2>GALERIA REALIZACJI</h2>
+        <div id="galleryGrid" class="gallery-grid">
+            <p class="muted">Wkrótce pojawią się tutaj zdjęcia naszych realizacji.</p>
+        </div>
+    </section>
 
-      if (serviceSelect) {
-        data.services.forEach(s => {
-          const opt = document.createElement('option');
-          opt.value = s.name;
-          opt.textContent = `${s.name} (${s.price})`;
-          serviceSelect.appendChild(opt);
-        });
-      }
-    }
-  } catch (err) {
-    console.error("Błąd ładowania danych:", err);
-  }
+    <section id="kontakt" class="section">
+        <h2>SKONTAKTUJ SIĘ Z NAMI</h2>
+        <form id="contactForm" class="contact-form">
+            <label>Imię i nazwisko <input name="name" required></label>
+            <label>Telefon <input name="phone" required></label>
+            <label>Adres e-mail <input name="email" type="email" required></label>
+            <label>Wybierz usługę 
+                <select name="service_id" id="contactServiceSelect">
+                    <option value="">Wybierz usługę...</option>
+                </select>
+            </label>
+            <label>Wiadomość / Preferowany termin <textarea name="message" placeholder="Napisz wiadomość..."></textarea></label>
+            <button type="submit" class="primary-btn">Wyślij zgłoszenie</button>
+            <p id="contactMsg" class="success-msg"></p>
+        </form>
+    </section>
 
-  const contactForm = document.querySelector('#contactForm');
-  if (contactForm) {
-    contactForm.addEventListener('submit', async e => {
-      e.preventDefault();
-      const formData = Object.fromEntries(new FormData(e.currentTarget));
-      try {
-        const r = await fetch('/api/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData)
-        });
-        const result = await r.json();
-        if (!r.ok) throw new Error(result.message || "Błąd wysyłania.");
-        
-        document.querySelector('#contactMsg').textContent = "Wiadomość została wysłana pomyślnie!";
-        contactForm.reset();
-      } catch (err) {
-        document.querySelector('#contactMsg').textContent = err.message;
-      }
-    });
-  }
-});
+    <footer class="main-footer">
+        <p>&copy; 2026 CARSPA KATO. Wszelkie prawa zastrzeżone.</p>
+    </footer>
+
+    <script src="/script.js"></script>
+</body>
+</html>
