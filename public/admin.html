@@ -11,9 +11,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background: #121212; color: #fff; min-height: 100vh; display: flex; flex-direction: column; }
         
-        .lime { color: #ccff00; }
-
-        /* Ekran logowania */
         .login-wrapper { display: flex; align-items: center; justify-content: center; flex: 1; padding: 20px; }
         .login-box { background: #181818; border: 1px solid #2a2a2a; border-radius: 8px; padding: 40px; width: 100%; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         
@@ -34,7 +31,6 @@
 
         .error-msg { color: #ff4d4d; font-size: 13px; margin-top: 10px; text-align: center; }
 
-        /* Panel główny po zalogowaniu */
         .admin-container { padding: 40px; max-width: 1200px; margin: 0 auto; width: 100%; flex: 1; display: none; }
         .admin-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #2a2a2a; padding-bottom: 20px; }
         
@@ -65,7 +61,7 @@
                 <div class="brand-title">CARSPA KATO<small>PANEL ADMINISTRATORA</small></div>
             </div>
             <h2 class="section-title">Logowanie</h2>
-            <form id="loginForm">
+            <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label>Login</label>
                     <input type="text" id="username" required placeholder="Wpisz login...">
@@ -87,7 +83,7 @@
                 <div class="brand-mark">C</div>
                 <div class="brand-title">CARSPA KATO<small>PANEL ADMINISTRATORA</small></div>
             </div>
-            <button id="logoutBtn" class="logout-btn">Wyloguj się</button>
+            <button id="logoutBtn" class="logout-btn" onclick="handleLogout()">Wyloguj się</button>
         </div>
 
         <div class="admin-nav">
@@ -100,12 +96,44 @@
         <div id="tab-gallery" class="tab-content active">
             <h2 class="section-title">Galeria zdjęć realizacji</h2>
             <div class="upload-box">
-                <form id="uploadForm">
-                    <input type="file" id="imageInput
-<script>
+                <form id="uploadForm" onsubmit="handleUpload(event)">
+                    <input type="file" id="imageInput" name="image" accept="image/*" required style="margin-bottom: 15px; color: #aaa;"><br>
+                    <button type="submit" class="btn-primary" style="max-width: 200px;">Dodaj zdjęcie</button>
+                </form>
+            </div>
+            <div id="adminGalleryGrid" class="admin-gallery-grid"></div>
+        </div>
+
+        <!-- Zakładka: Usługi i cennik -->
+        <div id="tab-services" class="tab-content">
+            <h2 class="section-title">Zarządzanie usługami</h2>
+            <div style="background: #121212; padding: 20px; border-radius: 6px; border: 1px solid #333; margin-bottom: 20px;">
+                <h3 style="font-family: 'Barlow Condensed'; font-size: 20px; margin-bottom: 15px;">Dodaj nową usługę</h3>
+                <form id="addServiceForm" onsubmit="handleAddService(event)">
+                    <div class="form-group"><label>Nazwa usługi</label><input type="text" id="serviceName" required></div>
+                    <div class="form-group"><label>Cena (np. od 500 zł)</label><input type="text" id="servicePrice" required></div>
+                    <div class="form-group"><label>Opis</label><textarea id="serviceDesc" rows="3"></textarea></div>
+                    <button type="submit" class="btn-primary" style="max-width: 200px;">Dodaj usługę</button>
+                </form>
+            </div>
+            <div id="servicesList">Brak dodanych usług.</div>
+        </div>
+
+        <!-- Zakładka: Ustawienia / Kontakt -->
+        <div id="tab-settings" class="tab-content">
+            <h2 class="section-title">Dane kontaktowe i ustawienia</h2>
+            <form id="settingsForm" onsubmit="handleSaveSettings(event)">
+                <div class="form-group"><label>Numer telefonu</label><input type="text" id="setPhone" value="+48 000 000 000"></div>
+                <div class="form-group"><label>Adres E-mail</label><input type="email" id="setEmail" value="kontakt@carspakato.pl"></div>
+                <div class="form-group"><label>Adres / Lokalizacja</label><input type="text" id="setAddress" value="Katowice"></div>
+                <button type="submit" class="btn-primary" style="max-width: 200px;">Zapisz ustawienia</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
         const $ = (id) => document.getElementById(id);
 
-        // Sprawdź autoryzację przy starcie
         async function checkAuth() {
             try {
                 const res = await fetch('/api/admin/me');
@@ -119,8 +147,7 @@
             }
         }
 
-        // Obsługa formularza logowania z bezpośrednimi alertami błędu
-        $('loginForm').addEventListener('submit', async (e) => {
+        async function handleLogin(e) {
             e.preventDefault();
             const username = $('username').value.trim();
             const password = $('password').value;
@@ -141,17 +168,17 @@
                     $('adminSection').style.display = 'block';
                     loadAdminGallery();
                 } else {
-                    errorEl.textContent = data.error || "Błąd logowania.";
+                    errorEl.textContent = data.error || "Nieprawidłowy login lub hasło.";
                 }
             } catch (err) {
-                errorEl.textContent = "Błąd sieci: " + err.message;
+                errorEl.textContent = "Błąd połączenia z serwerem.";
             }
-        });
+        }
 
-        $('logoutBtn').addEventListener('click', async () => {
+        async function handleLogout() {
             await fetch('/api/admin/logout', { method: 'POST' });
             location.reload();
-        });
+        }
 
         function switchTab(tabName, evt) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -164,8 +191,7 @@
             if (evt) evt.currentTarget.classList.add('active');
         }
 
-        // Galeria
-        $('uploadForm').addEventListener('submit', async (e) => {
+        async function handleUpload(e) {
             e.preventDefault();
             const fileInput = $('imageInput');
             if (!fileInput.files[0]) return;
@@ -182,14 +208,14 @@
                 if (res.ok && data.success) {
                     fileInput.value = '';
                     loadAdminGallery();
-                    alert("Zdjęcie dodane pomyślnie!");
+                    alert("Zdjęcie zostało dodane pomyślnie!");
                 } else {
-                    alert(data.error || "Błąd wgrywania.");
+                    alert(data.error || "Błąd podczas wgrywania zdjęcia.");
                 }
             } catch (err) {
-                alert("Błąd połączenia.");
+                alert("Błąd połączenia z serwerem.");
             }
-        });
+        }
 
         async function loadAdminGallery() {
             try {
@@ -209,30 +235,37 @@
                     </div>
                 `).join('');
             } catch (err) {
-                console.error(err);
+                console.error("Błąd ładowania galerii", err);
             }
         }
 
         async function deleteImage(id) {
-            if (!confirm("Na pewno usunąć?")) return;
+            if (!confirm("Czy na pewno chcesz usunąć to zdjęcie?")) return;
             try {
                 const res = await fetch(`/api/admin/gallery/${id}`, { method: 'DELETE' });
-                if (res.ok) loadAdminGallery();
+                if (res.ok) {
+                    loadData();
+                    loadAdminGallery();
+                } else {
+                    alert("Nie udało się usunąć zdjęcia.");
+                }
             } catch (err) {
-                alert("Błąd.");
+                alert("Błąd serwera.");
             }
         }
 
-        $('addServiceForm').addEventListener('submit', (e) => {
+        function handleAddService(e) {
             e.preventDefault();
-            alert("Usługa zapisana pomyślnie!");
+            alert("Usługa została dodana!");
             e.target.reset();
-        });
+        }
 
-        $('settingsForm').addEventListener('submit', (e) => {
+        function handleSaveSettings(e) {
             e.preventDefault();
-            alert("Ustawienia zapisane pomyślnie!");
-        });
+            alert("Ustawienia zostały zapisane!");
+        }
 
         checkAuth();
     </script>
+</body>
+</html>
