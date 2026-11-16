@@ -26,8 +26,8 @@
 
         .form-group { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
         .form-group label { font-size: 13px; color: #aaa; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-group input { background: #121212; border: 1px solid #333; border-radius: 4px; padding: 12px 15px; color: #fff; font-size: 14px; outline: none; transition: border-color 0.3s; }
-        .form-group input:focus { border-color: #ccff00; }
+        .form-group input, .form-group textarea { background: #121212; border: 1px solid #333; border-radius: 4px; padding: 12px 15px; color: #fff; font-size: 14px; outline: none; transition: border-color 0.3s; }
+        .form-group input:focus, .form-group textarea:focus { border-color: #ccff00; }
 
         .btn-primary { background: #ccff00; color: #000; border: none; padding: 13px; font-weight: 700; width: 100%; border-radius: 4px; cursor: pointer; text-transform: uppercase; font-size: 14px; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px; transition: background 0.3s; }
         .btn-primary:hover { background: #b3e600; }
@@ -92,6 +92,8 @@
 
         <div class="admin-nav">
             <button class="tab-btn active" onclick="switchTab('gallery', event)">Galeria zdjęć</button>
+            <button class="tab-btn" onclick="switchTab('services', event)">Usługi i cennik</button>
+            <button class="tab-btn" onclick="switchTab('settings', event)">Ustawienia / Kontakt</button>
         </div>
 
         <!-- Zakładka: Galeria -->
@@ -99,131 +101,4 @@
             <h2 class="section-title">Galeria zdjęć realizacji</h2>
             <div class="upload-box">
                 <form id="uploadForm">
-                    <input type="file" id="imageInput" name="image" accept="image/*" required style="margin-bottom: 15px; color: #aaa;"><br>
-                    <button type="submit" class="btn-primary" style="max-width: 200px;">Dodaj zdjęcie</button>
-                </form>
-            </div>
-            <div id="adminGalleryGrid" class="admin-gallery-grid"></div>
-        </div>
-    </div>
-
-    <script>
-        const $ = (id) => document.getElementById(id);
-
-        async function checkAuth() {
-            try {
-                const res = await fetch('/api/admin/me');
-                if (res.ok) {
-                    $('loginSection').style.display = 'none';
-                    $('adminSection').style.display = 'block';
-                    loadAdminGallery();
-                }
-            } catch (err) {
-                console.error("Błąd autoryzacji", err);
-            }
-        }
-
-        $('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = $('username').value.trim();
-            const password = $('password').value;
-            const errorEl = $('loginError');
-            errorEl.textContent = "Logowanie...";
-
-            try {
-                const res = await fetch('/api/admin/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-                
-                const data = await res.json();
-                if (res.ok && data.success) {
-                    $('loginSection').style.display = 'none';
-                    $('adminSection').style.display = 'block';
-                    loadAdminGallery();
-                } else {
-                    errorEl.textContent = data.error || "Nieprawidłowy login lub hasło.";
-                }
-            } catch (err) {
-                errorEl.textContent = "Błąd połączenia z serwerem.";
-            }
-        });
-
-        $('logoutBtn').addEventListener('click', async () => {
-            await fetch('/api/admin/logout', { method: 'POST' });
-            location.reload();
-        });
-
-        function switchTab(tabName, evt) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            $('tab-gallery').classList.add('active');
-            if (evt) evt.currentTarget.classList.add('active');
-        }
-
-        $('uploadForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const fileInput = $('imageInput');
-            if (!fileInput.files[0]) return;
-
-            const formData = new FormData();
-            formData.append('image', fileInput.files[0]);
-
-            try {
-                const res = await fetch('/api/admin/gallery', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await res.json();
-                if (res.ok && data.success) {
-                    fileInput.value = '';
-                    loadAdminGallery();
-                } else {
-                    alert(data.error || "Błąd podczas wgrywania zdjęcia.");
-                }
-            } catch (err) {
-                alert("Błąd połączenia z serwerem.");
-            }
-        });
-
-        async function loadAdminGallery() {
-            try {
-                const res = await fetch('/api/gallery');
-                const images = await res.json();
-                const grid = $('adminGalleryGrid');
-
-                if (!images || images.length === 0) {
-                    grid.innerHTML = '<p style="color: #888; grid-column: 1 / -1; text-align: center;">Brak zdjęć w galerii.</p>';
-                    return;
-                }
-
-                grid.innerHTML = images.map(img => `
-                    <div class="admin-gallery-item">
-                        <img src="${img.url}" alt="Realizacja">
-                        <button class="btn-danger" onclick="deleteImage(${img.id})">Usuń zdjęcie</button>
-                    </div>
-                `).join('');
-            } catch (err) {
-                console.error("Błąd ładowania galerii", err);
-            }
-        }
-
-        async function deleteImage(id) {
-            if (!confirm("Czy na pewno chcesz usunąć to zdjęcie?")) return;
-            try {
-                const res = await fetch(`/api/admin/gallery/${id}`, { method: 'DELETE' });
-                if (res.ok) {
-                    loadAdminGallery();
-                } else {
-                    alert("Nie udało się usunąć zdjęcia.");
-                }
-            } catch (err) {
-                alert("Błąd serwera.");
-            }
-        }
-
-        checkAuth();
-    </script>
-</body>
-</html>
+                    <input type="file" id="imageInput
