@@ -58,13 +58,51 @@ async function refreshAll() {
 // Rezerwacje
 async function loadBookings() {
   const a = await api("/api/admin/bookings");
-  $("#bookings").innerHTML = a.length ? `<div style="overflow:auto"><table class="admin-table"><thead><tr><th>Klient</th><th>Usługa</th><th>Termin</th><th>Status</th><th>Akcja</th></tr></thead><tbody>${a.map(b => `<tr><td><b>${esc(b.name)}</b><br>${esc(b.phone)}<br>${esc(b.email)}</td><td>${esc(b.service_name)}</td><td>${esc(b.preferred_date)}<br>${esc(b.preferred_time)}</td><td>${esc(b.status)}</td><td><select data-status="${b.id}">${["Nowa", "Potwierdzona", "Odrzucona", "Zakończona"].map(s => `<option ${s === b.status ? "selected" : ""}>${s}</option>`).join("")}</select><button class="small-btn" data-save="${b.id}">Zapisz</button></td></tr><tr><td colspan="5" class="muted">Wiadomość: ${esc(b.message \vert{}\vert{} "—")} • Zgłoszenie: ${esc(b.created_at)}</td></tr>`).join("")}</tbody></table></div>` : '<p class="muted">Brak rezerwacji.</p>'; document.querySelectorAll("[data-save]").forEach(btn => btn.onclick = async () => { try { await api("/api/admin/bookings/" + btn.dataset.save, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: document.querySelector(`[data-status="${btn.dataset.save}"]`).value })
-      });
-      $("#adminMsg").textContent = "Zmieniono status rezerwacji.";
-      loadBookings();
-    } catch (e) {
-      $("#adminMsg").textContent = e.message;
-    }
+  const container = $("#bookings");
+  
+  if (!a || a.length === 0) {
+    container.innerHTML = '<p class="muted">Brak rezerwacji.</p>';
+    return;
+  }
+
+  let html = '<div style="overflow:auto"><table class="admin-table"><thead><tr><th>Klient</th><th>Usługa</th><th>Termin</th><th>Status</th><th>Akcja</th></tr></thead><tbody>';
+  
+  a.forEach(b => {
+    const statuses = ["Nowa", "Potwierdzona", "Odrzucona", "Zakończona"];
+    const options = statuses.map(s => `<option ${s === b.status ? "selected" : ""}>${s}</option>`).join("");
+    
+    html += `<tr>
+      <td><b>${esc(b.name)}</b><br>${esc(b.phone)}<br>${esc(b.email)}</td>
+      <td>${esc(b.service_name)}</td>
+      <td>${esc(b.preferred_date)}<br>${esc(b.preferred_time)}</td>
+      <td>${esc(b.status)}</td>
+      <td>
+        <select data-status="${b.id}">${options}</select>
+        <button class="small-btn" data-save="${b.id}">Zapisz</button>
+      </td>
+    </tr>
+    <tr><td colspan="5" class="muted">Wiadomość: ${esc(b.message || "—")} • Zgłoszenie: ${esc(b.created_at)}</td></tr>`;
+  });
+
+  html += '</tbody></table></div>';
+  container.innerHTML = html;
+
+  document.querySelectorAll("[data-save]").forEach(btn => {
+    btn.onclick = async () => {
+      try {
+        const id = btn.dataset.save;
+        const statusVal = document.querySelector(`[data-status="${id}"]`).value;
+        await api("/api/admin/bookings/" + id, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: statusVal })
+        });
+        $("#adminMsg").textContent = "Zmieniono status rezerwacji.";
+        loadBookings();
+      } catch (e) {
+        $("#adminMsg").textContent = e.message;
+      }
+    };
   });
 }
 
@@ -72,25 +110,31 @@ async function loadBookings() {
 async function loadServices() {
   servicesCache = await api("/api/admin/services");
   $("#servicesAdmin").innerHTML = servicesCache.map(s => `<div class="admin-card"><form data-edit-service="${s.id}" class="admin-grid"><label>Nazwa<input name="name" value="${esc(s.name)}" required></label><label>Cena<input name="price" value="${esc(s.price)}" required></label><label>Opis<input name="description" value="${esc(s.description)}"></label><label>Czas realizacji<input name="duration" value="${esc(s.duration)}"></label><div><button>Zapisz zmiany</button><button type="button" class="danger" data-delete-service="${s.id}">Usuń</button></div></form></div>`).join("");
-  document.querySelectorAll("[data-edit-service]").forEach(f => f.onsubmit = async e => {
-    e.preventDefault();
-    try {
-      await api("/api/admin/services/" + f.dataset.editService, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(Object.fromEntries(new FormData(f)))
-      });
-      $("#adminMsg").textContent = "Zapisano usługę.";
-      loadServices();
-    } catch (e) {
-      $("#adminMsg").textContent = e.message;
-    }
+  
+  document.querySelectorAll("[data-edit-service]").forEach(f => {
+    f.onsubmit = async e => {
+      e.preventDefault();
+      try {
+        await api("/api/admin/services/" + f.dataset.editService, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(Object.fromEntries(new FormData(f)))
+        });
+        $("#adminMsg").textContent = "Zapisano usługę.";
+        loadServices();
+      } catch (e) {
+        $("#adminMsg").textContent = e.message;
+      }
+    };
   });
-  document.querySelectorAll("[data-delete-service]").forEach(b => b.onclick = async () => {
-    if (confirm("Usunąć tę usługę?")) {
-      await api("/api/admin/services/" + b.dataset.deleteService, { method: "DELETE" });
-      loadServices();
-    }
+
+  document.querySelectorAll("[data-delete-service]").forEach(b => {
+    b.onclick = async () => {
+      if (confirm("Usunąć tę usługę?")) {
+        await api("/api/admin/services/" + b.dataset.deleteService, { method: "DELETE" });
+        loadServices();
+      }
+    };
   });
 }
 
@@ -113,4 +157,59 @@ $("#serviceForm").onsubmit = async e => {
 // Galeria
 async function loadGallery() {
   const d = await api("/api/public-data");
-  $("#galleryAdmin").innerHTML = (d.gallery || []).map(g => `<div><img src="/uploads/${encodeURIComponent(g.filename)}"><p>${
+  $("#galleryAdmin").innerHTML = (d.gallery || []).map(g => `<div><img src="/uploads/${encodeURIComponent(g.filename)}"><p>${esc(g.caption)}</p><button class="danger" data-delete-photo="${g.id}">Usuń</button></div>`).join("") || '<p class="muted">Brak zdjęć w galerii.</p>';
+  
+  document.querySelectorAll("[data-delete-photo]").forEach(b => {
+    b.onclick = async () => {
+      if (confirm("Usunąć zdjęcie?")) {
+        await api("/api/admin/gallery/" + b.dataset.deletePhoto, { method: "DELETE" });
+        loadGallery();
+      }
+    };
+  });
+}
+
+$("#galleryForm").onsubmit = async e => {
+  e.preventDefault();
+  const formElement = e.currentTarget;
+  const fd = new FormData(formElement);
+  try {
+    const r = await fetch("/api/admin/gallery", { method: "POST", body: fd });
+    const d = await r.json();
+    if (!r.ok) throw Error(d.error || "Błąd wysyłania zdjęcia.");
+    formElement.reset();
+    loadGallery();
+    const msg = $("#adminMsg");
+    if (msg) msg.textContent = "Dodano zdjęcie.";
+  } catch (x) {
+    const msg = $("#adminMsg");
+    if (msg) msg.textContent = x.message;
+  }
+};
+
+// Ustawienia
+async function loadSettings() {
+  const d = await api("/api/public-data");
+  const f = $("#settingsForm");
+  if (d.settings) {
+    Object.keys(d.settings).forEach(k => {
+      if (f.elements[k]) f.elements[k].value = d.settings[k];
+    });
+  }
+}
+
+$("#settingsForm").onsubmit = async e => {
+  e.preventDefault();
+  try {
+    await api("/api/admin/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(Object.fromEntries(new FormData(e.currentTarget)))
+    });
+    $("#adminMsg").textContent = "Zapisano ustawienia.";
+  } catch (x) {
+    $("#adminMsg").textContent = x.message;
+  }
+};
+
+check();
