@@ -14,16 +14,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(ROOT, "public")));
 
-// Prosta pamięć sesji admina w pamięci serwera
+// Pamięć sesji administratora
 const activeSessions = new Set();
 
-// Automatyczne utworzenie folderu uploads, jeśli go nie ma
+// Automatyczne utworzenie folderu uploads
 const uploadDir = path.join(ROOT, "public", "uploads");
 if (!fs.existsSync(uploadDir)){
     fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Konfiguracja zapisu zdjęć przez multer
+// Konfiguracja Multer dla galerii
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
@@ -35,16 +35,15 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// --- AUTORYZACJA ADMINA ---
+// --- ENDPOINTY LOGOWANIA ---
 app.post("/api/admin/login", (req, res) => {
   const { username, password } = req.body;
   const adminUser = process.env.ADMIN_USER || "admin";
-  const adminPass = process.env.ADMIN_PASS || "admin123";
+  const adminPass = process.env.ADMIN_PASS || "Hania2022.";
 
   if (username === adminUser && password === adminPass) {
     const token = Math.random().toString(36).substring(2);
     activeSessions.add(token);
-    // Ustawiamy ciasteczko sesji
     res.setHeader('Set-Cookie', `admin_token=${token}; Path=/; HttpOnly; SameSite=Strict`);
     res.json({ success: true, email: adminUser });
   } else {
@@ -74,7 +73,7 @@ app.post("/api/contact", async (req, res) => {
   const { name, phone, email, service_id, message } = req.body;
 
   try {
-    const data = await resend.emails.send({
+    await resend.emails.send({
       from: 'CARSPA KATO <kontakt@carspakato.pl>',
       to: "kontakt@carspakato.pl",
       subject: `Nowe zgłoszenie z formularza: ${name || "Klient"}`,
@@ -87,7 +86,7 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-// Endpoint galerii w panelu admina (chroniony prostym sprawdzeniem sesji)
+// Endpoint galerii
 app.post("/api/admin/gallery", upload.single('photo'), (req, res) => {
   try {
     if (!req.file) {
@@ -97,6 +96,19 @@ app.post("/api/admin/gallery", upload.single('photo'), (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Błąd serwera." });
   }
+});
+
+// Tymczasowe/przykładowe endpointy danych publicznych, jeśli nie były zdefiniowane
+app.get("/api/public-data", (req, res) => {
+  res.json({ gallery: [], settings: { phone: "", email: "", address: "" } });
+});
+
+app.get("/api/admin/services", (req, res) => {
+  res.json([]);
+});
+
+app.get("/api/admin/bookings", (req, res) => {
+  res.json([]);
 });
 
 app.get("*", (req, res) => {
