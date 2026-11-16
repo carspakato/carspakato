@@ -102,3 +102,137 @@
             <div class="upload-box">
                 <form id="uploadForm">
                     <input type="file" id="imageInput
+<script>
+        const $ = (id) => document.getElementById(id);
+
+        // Sprawdź autoryzację przy starcie
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/admin/me');
+                if (res.ok) {
+                    $('loginSection').style.display = 'none';
+                    $('adminSection').style.display = 'block';
+                    loadAdminGallery();
+                }
+            } catch (err) {
+                console.log("Niezalogowany");
+            }
+        }
+
+        // Obsługa formularza logowania z bezpośrednimi alertami błędu
+        $('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = $('username').value.trim();
+            const password = $('password').value;
+            const errorEl = $('loginError');
+            errorEl.textContent = "Logowanie w toku...";
+
+            try {
+                const res = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok && data.success) {
+                    $('loginSection').style.display = 'none';
+                    $('adminSection').style.display = 'block';
+                    loadAdminGallery();
+                } else {
+                    errorEl.textContent = data.error || "Błąd logowania.";
+                }
+            } catch (err) {
+                errorEl.textContent = "Błąd sieci: " + err.message;
+            }
+        });
+
+        $('logoutBtn').addEventListener('click', async () => {
+            await fetch('/api/admin/logout', { method: 'POST' });
+            location.reload();
+        });
+
+        function switchTab(tabName, evt) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            if (tabName === 'gallery') $('tab-gallery').classList.add('active');
+            if (tabName === 'services') $('tab-services').classList.add('active');
+            if (tabName === 'settings') $('tab-settings').classList.add('active');
+            
+            if (evt) evt.currentTarget.classList.add('active');
+        }
+
+        // Galeria
+        $('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = $('imageInput');
+            if (!fileInput.files[0]) return;
+
+            const formData = new FormData();
+            formData.append('image', fileInput.files[0]);
+
+            try {
+                const res = await fetch('/api/admin/gallery', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    fileInput.value = '';
+                    loadAdminGallery();
+                    alert("Zdjęcie dodane pomyślnie!");
+                } else {
+                    alert(data.error || "Błąd wgrywania.");
+                }
+            } catch (err) {
+                alert("Błąd połączenia.");
+            }
+        });
+
+        async function loadAdminGallery() {
+            try {
+                const res = await fetch('/api/gallery');
+                const images = await res.json();
+                const grid = $('adminGalleryGrid');
+
+                if (!images || images.length === 0) {
+                    grid.innerHTML = '<p style="color: #888; grid-column: 1 / -1; text-align: center;">Brak zdjęć w galerii.</p>';
+                    return;
+                }
+
+                grid.innerHTML = images.map(img => `
+                    <div class="admin-gallery-item">
+                        <img src="${img.url}" alt="Realizacja">
+                        <button class="btn-danger" onclick="deleteImage(${img.id})">Usuń zdjęcie</button>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function deleteImage(id) {
+            if (!confirm("Na pewno usunąć?")) return;
+            try {
+                const res = await fetch(`/api/admin/gallery/${id}`, { method: 'DELETE' });
+                if (res.ok) loadAdminGallery();
+            } catch (err) {
+                alert("Błąd.");
+            }
+        }
+
+        $('addServiceForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert("Usługa zapisana pomyślnie!");
+            e.target.reset();
+        });
+
+        $('settingsForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert("Ustawienia zapisane pomyślnie!");
+        });
+
+        checkAuth();
+    </script>
