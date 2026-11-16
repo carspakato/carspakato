@@ -114,14 +114,14 @@ app.post("/api/admin/settings", requireAdmin, (req, res) => {
 
 app.get("/admin.html", (req, res) => { res.sendFile(path.join(ROOT, "public", "admin.html")); });
 
-// Jawne i bezbłędne trasy dla podstron
+// Jawne trasy dla podstron
 app.get("/detailing-zewnetrzny", (req, res) => { res.sendFile(path.join(ROOT, "public", "detailing-zewnetrzny.html")); });
 app.get("/detailing-zewnetrzny.html", (req, res) => { res.sendFile(path.join(ROOT, "public", "detailing-zewnetrzny.html")); });
-app.get("/uslugi/detailing-zewnetrzny.html", (req, res) => { res.sendFile(path.join(ROOT, "public", "detailing-zewnetrzny.html")); });
 
 app.get("/detailing-wewnetrzny", (req, res) => { res.sendFile(path.join(ROOT, "public", "detailing-wewnetrzny.html")); });
 app.get("/detailing-wewnetrzny.html", (req, res) => { res.sendFile(path.join(ROOT, "public", "detailing-wewnetrzny.html")); });
-app.get("/uslugi/detailing-wewnetrzny.html", (req, res) => { res.sendFile(path.join(ROOT, "public", "detailing-wewnetrzny.html")); });
+app.get("/detailing-wnetrzny", (req, res) => { res.sendFile(path.join(ROOT, "public", "detailing-wewnetrzny.html")); });
+app.get("/detailing-wnetrzny.html", (req, res) => { res.sendFile(path.join(ROOT, "public", "detailing-wewnetrzny.html")); });
 
 app.post("/api/contact", async (req, res) => {
   const { name, phone, email, service_id, message } = req.body;
@@ -139,7 +139,6 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-// Fallback dla pozostałych plików w public
 app.get("*", (req, res) => {
   const filePath = path.join(ROOT, "public", req.path);
   if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
