@@ -3,13 +3,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const res = await fetch('/api/public-data');
     const data = await res.json();
 
-    // 1. Ładowanie galerii na stronie głównej
     const galleryContainer = document.querySelector('#galleryGrid');
     if (galleryContainer) {
       if (data.gallery && data.gallery.length > 0) {
         galleryContainer.innerHTML = data.gallery.map(g => `
           <div class="gallery-item">
-            <img src="/uploads/${encodeURIComponent(g.filename)}" alt="${g.caption || 'Realizacja CARSPA KATO'}">
+            <img src="/uploads/${encodeURIComponent(g.filename)}" alt="${g.caption || 'Realizacja'}">
             ${g.caption ? `<p>${g.caption}</p>` : ''}
           </div>
         `).join('');
@@ -18,7 +17,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
 
-    // 2. Ładowanie usług i cennika
     const servicesContainer = document.querySelector('#servicesPublicGrid');
     const serviceSelect = document.querySelector('#contactServiceSelect');
 
@@ -29,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <h3>${s.name}</h3>
             <p class="price">${s.price}</p>
             <p>${s.description || ''}</p>
-            <span class="duration">Czas: ${s.duration || 'ustalany indywidualnie'}</span>
+            <span class="duration muted">Czas: ${s.duration || 'ustalany indywidualnie'}</span>
           </div>
         `).join('');
       }
@@ -44,10 +42,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
   } catch (err) {
-    console.error("Błąd ładowania danych publicznych:", err);
+    console.error("Błąd ładowania danych:", err);
   }
 
-  // 3. Obsługa formularza kontaktowego / rezerwacji na stronie głównej
   const contactForm = document.querySelector('#contactForm');
   if (contactForm) {
     contactForm.addEventListener('submit', async e => {
