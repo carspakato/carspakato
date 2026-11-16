@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
   secure: true,
   auth: {
     user: "kontakt@carspakato.pl",
-    pass: process.env.MAIL_PASS || "epglqkeatpsavcwo"
+    pass: "Hania2022."
   }
 });
 
