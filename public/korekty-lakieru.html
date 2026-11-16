@@ -3,70 +3,56 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Korekty lakieru Katowice – One Step, Two Step oraz pełna korekta trzyetapowa w CARSPA KATO. Usuwanie rys i maksymalny połysk lakieru.">
-<title>Korekty Lakieru | CARSPA KATO</title>
+<meta name="description" content="Zabezpieczenie lakieru folią PPF Katowice – folia bezbarwna i kolorowa, połysk lub mat z 10-letnią gwarancją w CARSPA KATO.">
+<title>Zabezpieczenie Lakieru (PPF) | CARSPA KATO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 <style>
-    /* Rozwijane menu Usługi u góry po kliknięciu */
-    .nav-dropdown {
-        position: relative;
-        display: inline-block;
+    .nav-dropdown { position: relative; display: inline-block; }
+    .nav-dropdown-btn { cursor: pointer; user-select: none; }
+    .nav-dropdown-menu { display: none; position: absolute; top: calc(100% + 12px); left: 0; min-width: 240px; background: #141414; border: 1px solid #333; border-radius: 8px; padding: 8px 0; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.85); z-index: 1000; }
+    .nav-dropdown-menu.show { display: block; }
+    .nav-dropdown-menu a { display: block !important; padding: 10px 18px !important; color: #f0f0f0 !important; text-decoration: none; font-size: 14px; border-bottom: 1px solid #222; transition: background 0.2s, color 0.2s; }
+    .nav-dropdown-menu a:last-child { border-bottom: none; }
+    .nav-dropdown-menu a:hover { background: #202020; color: #ccff00 !important; }
+    @media (max-width: 820px) {
+        .nav-dropdown { display: block; width: 100%; }
+        .nav-dropdown-menu { position: static; box-shadow: none; border: none; border-left: 2px solid #ccff00; border-radius: 0; margin: 6px 0 6px 12px; padding: 0; background: transparent; }
     }
-    .nav-dropdown-btn {
-        cursor: pointer;
-        user-select: none;
-    }
-    .nav-dropdown-menu {
-        display: none;
-        position: absolute;
-        top: calc(100% + 12px);
-        left: 0;
-        min-width: 240px;
+    
+    /* Style tabeli porównawczej */
+    .protection-table-container {
+        overflow-x: auto;
+        margin-top: 32px;
         background: #141414;
         border: 1px solid #333;
         border-radius: 8px;
-        padding: 8px 0;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.85);
-        z-index: 1000;
     }
-    .nav-dropdown-menu.show {
-        display: block;
+    .protection-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        font-size: 15px;
     }
-    .nav-dropdown-menu a {
-        display: block !important;
-        padding: 10px 18px !important;
-        color: #f0f0f0 !important;
-        text-decoration: none;
-        font-size: 14px;
+    .protection-table th, .protection-table td {
+        padding: 16px 20px;
         border-bottom: 1px solid #222;
-        transition: background 0.2s, color 0.2s;
+        vertical-align: top;
     }
-    .nav-dropdown-menu a:last-child {
+    .protection-table th {
+        background: #1a1a1a;
+        color: #ccff00;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 18px;
+        letter-spacing: 0.5px;
+    }
+    .protection-table tr:last-child td {
         border-bottom: none;
     }
-    .nav-dropdown-menu a:hover {
-        background: #202020;
-        color: #ccff00 !important;
-    }
-
-    @media (max-width: 820px) {
-        .nav-dropdown {
-            display: block;
-            width: 100%;
-        }
-        .nav-dropdown-menu {
-            position: static;
-            box-shadow: none;
-            border: none;
-            border-left: 2px solid #ccff00;
-            border-radius: 0;
-            margin: 6px 0 6px 12px;
-            padding: 0;
-            background: transparent;
-        }
+    .protection-table tr:hover {
+        background: #1c1c1c;
     }
 </style>
 </head>
@@ -80,9 +66,9 @@
             <div class="nav-dropdown-menu" id="servicesDropdownMenu">
                 <a href="/detailing-zewnetrzny.html">Detailing zewnętrzny</a>
                 <a href="/detailing-wewnetrzny.html">Detailing wewnętrzny</a>
-                <a href="/korekty-lakieru.html" style="color: #ccff00 !important;">Korekty lakieru</a>
+                <a href="/korekty-lakieru.html">Korekty lakieru</a>
                 <a href="/ochrona-lakieru.html">Ochrona lakieru</a>
-                <a href="/zabezpieczenie-lakieru.html">Zabezpieczenie lakieru</a>
+                <a href="/zabezpieczenie-lakieru.html" style="color: #ccff00 !important;">Zabezpieczenie lakieru</a>
                 <a href="/zmiana-koloru-auta.html">Zmiana koloru auta</a>
                 <a href="/#uslugi" style="color: #ccff00 !important; font-weight: 600;">Wszystkie usługi →</a>
             </div>
@@ -100,71 +86,112 @@
             <a href="/#uslugi" style="color: #ccff00; text-decoration: none; font-weight: 600; font-size: 14px;">← WRÓĆ NA STRONĘ GŁÓWNĄ</a>
         </div>
         
-        <p class="eyebrow">OFERTA SZCZEGÓŁOWA • RENOWACJA LAKIERU</p>
-        <h1>KOREKTY <span class="lime">LAKIERU</span></h1>
+        <p class="eyebrow">OFERTA SZCZEGÓŁOWA • FOLIE OCHRONNE PPF</p>
+        <h1>ZABEZPIECZENIE <span class="lime">LAKIERU PPF</span></h1>
         <p style="max-width: 740px; color: #ccc; font-size: 18px; line-height: 1.6; margin-top: 16px;">
-            Usunięcie rys, zmatowień, hologramów oraz utlenionej powłoki lakierniczej. Dobieramy stopień korekty indywidualnie do stanu lakieru Twojego samochodu, przywracając mu salonowy blask i lustrzane wykończenie.
+            Zabezpiecz swój lakier na lata – postaw na folię ochronną PPF (bezbarwną lub kolorową w wykończeniu połysk lub mat)! Fabryczny lakier ma zaledwie 70–160 mikronów grubości, dlatego łatwo ulega odpryskom i zarysowaniom. Dzięki folii PPF dokładamy na karoserię nawet 200 dodatkowych mikronów pancerza, który bierze wszystkie uszkodzenia na siebie.
         </p>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 48px;">
-            
-            <!-- 1 ETAP -->
-            <div style="background: #181818; border: 1px solid #333; border-radius: 8px; padding: 28px; display: flex; flex-direction: column; justify-content: space-between;">
-                <div>
-                    <p class="eyebrow" style="margin-bottom: 8px;">1 ETAP • ONE STEP</p>
-                    <h3 style="margin-bottom: 12px;">KOREKTA JEDNOETAPOWA</h3>
-                    <p style="color: #bbb; font-size: 15px; line-height: 1.6; margin-bottom: 20px;">
-                        Szybkie odświeżenie wyglądu auta, idealne do usunięcia lekkich zmatowień i podbicia połysku jednym przejazdem maszyny.
-                    </p>
-                    <ul style="color: #ddd; font-size: 14px; line-height: 1.8; padding-left: 18px; margin-bottom: 24px;">
-                        <li><strong>Nazwa branżowa:</strong> One Step (czasem One Stage)</li>
-                        <li><strong>Skuteczność:</strong> Usuwa ok. 40–60% zarysowań</li>
-                        <li>Przywraca głęboki połysk i świeżość lakieru</li>
-                    </ul>
-                </div>
-                <p style="font-weight: 700; color: #ccff00; font-size: 20px; margin: 0;">od 600 zł</p>
-            </div>
+        <!-- Informacja o gwarancji -->
+        <div style="margin-top: 32px; background: #181818; border-left: 4px solid #ccff00; border-radius: 0 8px 8px 0; padding: 20px 24px;">
+            <h4 style="color: #ccff00; margin-bottom: 6px; font-family: 'Barlow Condensed', sans-serif; font-size: 20px; letter-spacing: 0.5px;">10 LAT GWARANCJI PRODUCENTA</h4>
+            <p style="color: #ddd; margin: 0; font-size: 15px; line-height: 1.5;">
+                Pracujemy wyłącznie na sprawdzonych folijach najwyższej jakości, które posiadają <strong>10 lat gwarancji na uszkodzenia</strong> (żółknięcie, pękanie, rozwarstwianie). Możesz spać spokojnie i nie martwić się o stan lakieru przez długie lata.
+            </p>
+        </div>
 
-            <!-- 2 ETAPY -->
-            <div style="background: #181818; border: 1px solid #ccff00; border-radius: 8px; padding: 28px; display: flex; flex-direction: column; justify-content: space-between;">
-                <div>
-                    <p class="eyebrow" style="margin-bottom: 8px;">2 ETAPY • TWO STEP</p>
-                    <h3 style="margin-bottom: 12px;">KOREKTA DWUETAPOWA</h3>
-                    <p style="color: #bbb; font-size: 15px; line-height: 1.6; margin-bottom: 20px;">
-                        Najpopularniejszy wybór. Łączy mocne usuwanie defektów (cięcie) z precyzyjnym nabłyszczaniem i wykończeniem.
-                    </p>
-                    <ul style="color: #ddd; font-size: 14px; line-height: 1.8; padding-left: 18px; margin-bottom: 24px;">
-                        <li><strong>Nazwa branżowa:</strong> Two Step (czasem Two Stage)</li>
-                        <li><strong>Skuteczność:</strong> Usuwa ok. 70–90% zarysowań</li>
-                        <li>Spektakularna poprawa wyglądu i likwidacja większości rys</li>
-                    </ul>
-                </div>
-                <p style="font-weight: 700; color: #ccff00; font-size: 20px; margin: 0;">od 1200 zł</p>
+        <!-- Co zyskujesz -->
+        <h3 style="margin-top: 48px; margin-bottom: 20px;">Co zyskujesz dzięki folii PPF?</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            <div style="background: #181818; border: 1px solid #333; border-radius: 8px; padding: 24px;">
+                <h4 style="color: #ccff00; margin-bottom: 8px; font-size: 17px;">Maksymalna ochrona (+150–200 µm)</h4>
+                <p style="color: #bbb; font-size: 14px; line-height: 1.5; margin: 0;">Skuteczna bariera przed kamieniami, żwirem, solą drogową i otarciami parkingowymi.</p>
             </div>
-
-            <!-- 3 ETAPY -->
-            <div style="background: #181818; border: 1px solid #333; border-radius: 8px; padding: 28px; display: flex; flex-direction: column; justify-content: space-between;">
-                <div>
-                    <p class="eyebrow" style="margin-bottom: 8px;">3 ETAPY • FULL CORRECTION</p>
-                    <h3 style="margin-bottom: 12px;">PEŁNA KOREKTA TRZYETAPOWA</h3>
-                    <p style="color: #bbb; font-size: 15px; line-height: 1.6; margin-bottom: 20px;">
-                        Maksymalna renowacja lakieru dla wymagających. Usunięcie niemal wszystkich niedoskonałości i uzyskanie lustra.
-                    </p>
-                    <ul style="color: #ddd; font-size: 14px; line-height: 1.8; padding-left: 18px; margin-bottom: 24px;">
-                        <li><strong>Nazwa branżowa:</strong> Full Correction / Three Step</li>
-                        <li><strong>Skuteczność:</strong> Usuwa ok. 95–99% zarysowań</li>
-                        <li>Maksymalna głębia koloru i idealne, lustrzane odbicie</li>
-                    </ul>
-                </div>
-                <p style="font-weight: 700; color: #ccff00; font-size: 20px; margin: 0;">od 1800 zł</p>
+            <div style="background: #181818; border: 1px solid #333; border-radius: 8px; padding: 24px;">
+                <h4 style="color: #ccff00; margin-bottom: 8px; font-size: 17px;">Samoregeneracja</h4>
+                <p style="color: #bbb; font-size: 14px; line-height: 1.5; margin: 0;">Drobne rysy i swirlsy znikają samoczynnie pod wpływem ciepła (słońca lub ciepłej wody).</p>
             </div>
+            <div style="background: #181818; border: 1px solid #333; border-radius: 8px; padding: 24px;">
+                <h4 style="color: #ccff00; margin-bottom: 8px; font-size: 17px;">Ochrona lub nowy kolor</h4>
+                <p style="color: #bbb; font-size: 14px; line-height: 1.5; margin: 0;">Wybierz niewidoczną tarczę (PPF bezbarwny) albo zmień kolor auta bez rezygnacji z ochrony pancernej (PPF kolorowy).</p>
+            </div>
+            <div style="background: #181818; border: 1px solid #333; border-radius: 8px; padding: 24px;">
+                <h4 style="color: #ccff00; margin-bottom: 8px; font-size: 17px;">Hydrofobowość</h4>
+                <p style="color: #bbb; font-size: 14px; line-height: 1.5; margin: 0;">Powłoka silnie odpycha brud i wodę, co drastycznie ułatwia codzienne mycie samochodu.</p>
+            </div>
+            <div style="background: #181818; border: 1px solid #333; border-radius: 8px; padding: 24px; grid-column: 1 / -1;">
+                <h4 style="color: #ccff00; margin-bottom: 8px; font-size: 17px;">Wyższa wartość auta przy odsprzedaży</h4>
+                <p style="color: #bbb; font-size: 14px; line-height: 1.5; margin: 0;">Po zdjęciu folii po latach, pod spodem zachowany jest fabrycznie nowy, nieskazitelny lakier.</p>
+            </div>
+        </div>
 
+        <!-- Tabela pakietów oklejania -->
+        <h2 style="margin-top: 56px; margin-bottom: 12px;">PORÓWNANIE PAKIETÓW <span class="lime">OKLEJANIA PPF</span></h2>
+        <p style="color: #bbb; margin-bottom: 24px;">Wybierz zakres ochrony dopasowany do Twojego budżetu i sposobu eksploatacji pojazdu.</p>
+
+        <!-- Informacja o cenie zależnej od wielkości auta -->
+        <div style="margin-bottom: 24px; background: #141414; border: 1px solid #333; border-radius: 8px; padding: 18px 22px; display: flex; align-items: center; gap: 14px;">
+            <span style="font-size: 24px;">ℹ️</span>
+            <p style="color: #ccc; font-size: 14px; line-height: 1.5; margin: 0;">
+                <strong>Ważna informacja:</strong> Ostateczna cena oklejenia folią PPF jest zawsze ustalana indywidualnie i zależy od rodzaju oraz wielkości samochodu (np. hatchback, sedan, SUV), a także stopnia skomplikowania kształtów nadwozia.
+            </p>
+        </div>
+
+        <div class="protection-table-container">
+            <table class="protection-table">
+                <thead>
+                    <tr>
+                        <th>Pakiet</th>
+                        <th>Zakres oklejanych elementów</th>
+                        <th>Dla kogo?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Front Bikini</strong><br><span style="font-size: 13px; color: #aaa;">(Częściowy przód)</span></td>
+                        <td>Przedni zderzak, reflektory, przednia część maski (zazwyczaj do 1/3 długości), przednie części błotników, lusterka boczne.</td>
+                        <td>Opcja budżetowa dla kierowców jeżdżących głównie po mieście, chcących chronić miejsca najbardziej narażone na odpryski.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Full Front</strong><br><span style="font-size: 13px; color: #aaa;">(Pełny przód)</span></td>
+                        <td>Cała maska, całe przednie błotniki, przedni zderzak, reflektory, lusterka boczne, słupki A (przy przedniej szybie), nadszybie (pasek nad szybą czołową).</td>
+                        <td>Najpopularniejszy wybór łączący świetną ochronę w trasie z rozsądną ceną; brak widocznych linii cięcia folii na masce.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Full Front +</strong><br><span style="font-size: 13px; color: #aaa;">(Rozszerzony przód)</span></td>
+                        <td>Wszystko to co w pakiecie Full Front oraz dodatkowo progi zewnętrzne, wnęki klamek, ranciki drzwi i parapet tylnego zderzaka (przestrzeń załadunkowa bagażnika).</td>
+                        <td>Idealny dla aut rodzinnych i codziennych – chroni przed uderzeniami w trasie oraz otarciami podczas wsiadania i pakowania bagażu.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Full Body</strong><br><span style="font-size: 13px; color: #aaa;">(Całe auto)</span></td>
+                        <td>Wszystkie elementy lakierowane na zewnątrz pojazdu (drzwi, dach, tylne błotniki, klapa bagażnika, tylny zderzak + cały przód) oraz reflektory.</td>
+                        <td>Maksymalna ochrona dla aut nowych, luksusowych, sportowych lub przy pełnej zmianie koloru folią PPF kolorową.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Dodatkowe warianty uzupełniające -->
+        <h3 style="margin-top: 48px; margin-bottom: 20px;">Dodatkowe warianty uzupełniające</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+            <div style="background: #181818; border: 1px solid #333; border-radius: 8px; padding: 24px;">
+                <h4 style="color: #ccff00; margin-bottom: 8px; font-size: 18px;">Pakiet Newralgiczny (Detale)</h4>
+                <p style="color: #bbb; font-size: 14px; line-height: 1.6; margin: 0;">
+                    Obejmuje wyłącznie drobne miejsca podatne na zarysowania od paznokci, butów czy bagażu: wnęki klamek, ranty drzwi, próg załadunkowy bagażnika oraz progi wewnętrzne.
+                </p>
+            </div>
+            <div style="background: #181818; border: 1px solid #333; border-radius: 8px; padding: 24px;">
+                <h4 style="color: #ccff00; margin-bottom: 8px; font-size: 18px;">Ochrona Wnętrza (Interior PPF)</h4>
+                <p style="color: #bbb; font-size: 14px; line-height: 1.6; margin: 0;">
+                    Oklejanie delikatnych elementów w kabinie, takich jak czarne dekory Piano Black, ekrany dotykowe czy konsola środkowa, które błyskawicznie rysują się od samego wycierania kurzu.
+                </p>
+            </div>
         </div>
 
         <div style="margin-top: 48px; background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 32px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px;">
             <div>
-                <h3 style="margin-bottom: 6px;">Chcesz odzyskać salonowy blask swojego auta?</h3>
-                <p style="color: #aaa; margin: 0;">Skontaktuj się z nami lub umów na bezpłatne oględziny lakieru w Katowicach.</p>
+                <h3 style="margin-bottom: 6px;">Chcesz zabezpieczyć lakier folią PPF z 10-letnią gwarancją?</h3>
+                <p style="color: #aaa; margin: 0;">Skontaktuj się z nami i wybierz odpowiedni pakiet dla swojego auta.</p>
             </div>
             <a class="btn primary" href="/#rezerwacja">UMÓW WIZYTĘ <span>↗️</span></a>
         </div>
@@ -179,38 +206,17 @@
 
 <script>
     document.getElementById('year').textContent = new Date().getFullYear();
-    
-    // Obsługa menu mobilnego
     const menuToggle = document.getElementById('menuToggle');
     const nav = document.getElementById('nav');
-    if (menuToggle && nav) { 
-        menuToggle.addEventListener('click', () => nav.classList.toggle('open')); 
+    if (menuToggle && nav) { menuToggle.addEventListener('click', () => nav.classList.toggle('open')); }
+    
+    const btn = document.getElementById('servicesDropdownBtn');
+    const menu = document.getElementById('servicesDropdownMenu');
+    if (btn && menu) {
+        btn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); menu.classList.toggle('show'); });
+        menu.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => menu.classList.remove('show')); });
+        document.addEventListener('click', (e) => { if (!menu.contains(e.target) && e.target !== btn) { menu.classList.remove('show'); } });
     }
-
-    // Obsługa rozwijanego menu Usługi
-    function setupServicesDropdown() {
-        const btn = document.getElementById('servicesDropdownBtn');
-        const menu = document.getElementById('servicesDropdownMenu');
-        if (!btn || !menu) return;
-
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            menu.classList.toggle('show');
-        });
-
-        menu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => menu.classList.remove('show'));
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!menu.contains(e.target) && e.target !== btn) {
-                menu.classList.remove('show');
-            }
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', setupServicesDropdown);
 </script>
 </body>
 </html>
