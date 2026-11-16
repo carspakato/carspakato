@@ -3,97 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel administratora | CARSPA KATO</title>
-    <link rel="stylesheet" href="/style.css">
+    <title>Panel Administratora | CARSPA KATO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: #121212; color: #fff; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .lime { color: #ccff00; }
+
+        /* Ekran logowania */
+        .login-wrapper { display: flex; align-items: center; justify-content: center; flex: 1; padding: 20px; }
+        .login-box { background: #181818; border: 1px solid #2a2a2a; border-radius: 8px; padding: 40px; width: 100%; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        .brand-header { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; }
+        .brand-mark { background: #ccff00; color: #000; font-weight: 900; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 20px; font-family: 'Barlow Condensed', sans-serif; }
+        .brand-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: 0.5px; line-height: 1.1; color: #fff; }
+        .brand-title small { display: block; font-size: 10px; color: #888; font-family: 'Inter', sans-serif; letter-spacing: 1px; font-weight: 600; }
+
+        h2.section-title { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 0.5px; }
+
+        .form-group { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 13px; color: #aaa; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input { background: #121212; border: 1px solid #333; border-radius: 4px; padding: 12px 15px; color: #fff; font-size: 14px; outline: none; transition: border-color 0.3s; }
+        .form-group input:focus { border-color: #ccff00; }
+
+        .btn-primary { background: #ccff00; color: #000; border: none; padding: 13px; font-weight: 700; width: 100%; border-radius: 4px; cursor: pointer; text-transform: uppercase; font-size: 14px; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px; transition: background 0.3s; }
+        .btn-primary:hover { background: #b3e600; }
+
+        .error-msg { color: #ff4d4d; font-size: 13px; margin-top: 10px; text-align: center; }
+
+        /* Panel główny po zalogowaniu */
+        .admin-container { padding: 40px; max-width: 1200px; margin: 0 auto; width: 100%; flex: 1; display: none; }
+        .admin-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #2a2a2a; padding-bottom: 20px; }
+        
+        .admin-nav { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 30px; }
+        .tab-btn { background: #1a1a1a; color: #ccc; border: 1px solid #2a2a2a; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 13px; text-transform: uppercase; transition: all 0.3s; }
+        .tab-btn.active, .tab-btn:hover { background: #ccff00; color: #000; border-color: #ccff00; }
+
+        .tab-content { display: none; background: #181818; border: 1px solid #2a2a2a; border-radius: 8px; padding: 30px; }
+        .tab-content.active { display: block; }
+
+        .logout-btn { background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; transition: all 0.3s; }
+        .logout-btn:hover { background: #ff4d4d; color: #fff; }
+
+        /* Style dla tabel i galerii w panelu */
+        .admin-gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .admin-gallery-item { background: #121212; border: 1px solid #2a2a2a; padding: 10px; border-radius: 6px; text-align: center; }
+        .admin-gallery-item img { width: 100%; height: 140px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; }
+        .btn-danger { background: #ff4d4d; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        
+        .upload-box { border: 2px dashed #333; padding: 25px; border-radius: 6px; text-align: center; margin-bottom: 20px; background: #121212; }
+    </style>
 </head>
 <body>
-    <div class="admin-container">
-        <!-- Ekran logowania -->
-        <div id="login" class="admin-box">
-            <h2>CARSPA KATO</h2>
-            <p>PANEL ADMINISTRATORA</p>
-            <h3>LOGOWANIE</h3>
-            
+
+    <!-- Ekran logowania -->
+    <div id="loginSection" class="login-wrapper">
+        <div class="login-box">
+            <div class="brand-header">
+                <div class="brand-mark">C</div>
+                <div class="brand-title">CARSPA KATO<small>PANEL ADMINISTRATORA</small></div>
+            </div>
+            <h2 class="section-title">Logowanie</h2>
             <form id="loginForm">
-                <label>Login</label>
-                <input type="text" name="username" required placeholder="Wpisz login">
-                
-                <label>Hasło</label>
-                <input type="password" name="password" required placeholder="Wpisz hasło">
-                
-                <button type="submit" class="primary-btn">ZALOGUJ SIĘ</button>
-                <p id="loginMsg" class="error-msg"></p>
-            </form>
-        </div>
-
-        <!-- Ekran panelu (ukryty do momentu zalogowania) -->
-        <div id="dashboard" class="hidden">
-            <header class="admin-header">
-                <div>
-                    <h2>Panel Administratora</h2>
-                    <span id="adminEmail" class="muted"></span>
+                <div class="form-group">
+                    <label>Login / Adres e-mail</label>
+                    <input type="text" id="username" required placeholder="Wpisz login...">
                 </div>
-                <button id="logout" class="danger-btn">Wyloguj się</button>
-            </header>
-
-            <nav class="admin-nav">
-                <button data-tab="bookings" class="active">Rezerwacje</button>
-                <button data-tab="services">Usługi i cennik</button>
-                <button data-tab="gallery">Galeria zdjęć</button>
-                <button data-tab="settings">Ustawienia strony</button>
-            </nav>
-
-            <p id="adminMsg" class="success-msg"></p>
-
-            <!-- Zakładka: Rezerwacje -->
-            <section id="tab-bookings" class="admin-tab">
-                <h3>Zarządzanie rezerwacjami</h3>
-                <div id="bookings">Ładowanie...</div>
-            </section>
-
-            <!-- Zakładka: Usługi -->
-            <section id="tab-services" class="admin-tab hidden">
-                <h3>Dodaj nową usługę</h3>
-                <form id="serviceForm" class="admin-grid">
-                    <label>Nazwa usługi <input name="name" required></label>
-                    <label>Cena <input name="price" required></label>
-                    <label>Opis <input name="description"></label>
-                    <label>Czas realizacji <input name="duration"></label>
-                    <button type="submit">Dodaj usługę</button>
-                </form>
-                <h3 style="margin-top: 30px;">Istniejące usługi</h3>
-                <div id="servicesAdmin">Ładowanie...</div>
-            </section>
-
-            <!-- Zakładka: Galeria zdjęć -->
-            <section id="tab-gallery" class="admin-tab hidden">
-                <h3>GALERIA ZDJĘĆ</h3>
-                <form id="galleryForm" class="admin-grid" enctype="multipart/form-data">
-                    <label>Wybierz zdjęcie 
-                        <input type="file" name="photo" accept="image/*" required>
-                    </label>
-                    <label>Podpis zdjęcia 
-                        <input type="text" name="caption" placeholder="np. Skoda">
-                    </label>
-                    <button type="submit" class="primary-btn">Dodaj zdjęcie</button>
-                </form>
-                <h3 style="margin-top: 30px;">Aktualna galeria</h3>
-                <div id="galleryAdmin" class="gallery-grid">Ładowanie...</div>
-            </section>
-
-            <!-- Zakładka: Ustawienia strony -->
-            <section id="tab-settings" class="admin-tab hidden">
-                <h3>Ustawienia strony</h3>
-                <form id="settingsForm" class="admin-grid">
-                    <label>Telefon kontaktowy <input name="phone"></label>
-                    <label>Adres e-mail <input name="email"></label>
-                    <label>Adres siedziby <input name="address"></label>
-                    <button type="submit">Zapisz ustawienia</button>
-                </form>
-            </section>
+                <div class="form-group">
+                    <label>Hasło</label>
+                    <input type="password" id="password" required placeholder="Wpisz hasło...">
+                </div>
+                <button type="submit" class="btn-primary">Zaloguj się</button>
+                <div id="loginError" class="error-msg"></div>
+            </form>
         </div>
     </div>
 
-    <script src="/admin.js"></script>
-</body>
-</html>
+    <!-- Panel Administratora (widoczny po zalogowaniu) -->
+    <div id="adminSection" class="admin-container">
+        <div class="admin-topbar">
+            <div class="brand-header" style="margin-bottom:0;">
+                <div class="brand-mark">C</div>
+                <div class="brand-title">CARSPA KATO<small>PANEL ADMINISTRATORA</small></div>
+            </div>
+            <button id="logoutBtn" class="logout-btn">Wyloguj się</button>
+        </div>
+
+        <div class="admin-nav">
+            <button class="tab-btn active" onclick="switchTab('reservations')">Rezerwacje</button>
+            <button class="tab-btn" onclick="switchTab('gallery')">Galeria zdjęć</button>
+        </div>
+
+        <!-- Zakładka: Rezerwacje -->
+        <div id="tab-reservations" class="tab-content active">
+            <h2 class="section-title">Zar
