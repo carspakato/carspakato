@@ -14,10 +14,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(ROOT, "public")));
 
-// Pamięć sesji administratora
 const activeSessions = new Set();
 
-// Przechowywanie danych w pamięci (galeria, usługi, ustawienia, rezerwacje)
 let galleryDB = [];
 let servicesDB = [
   { id: 1, name: "Mycie detailingowe", price: "250 zł", description: "Dokładne mycie ręczne", duration: "2h" },
@@ -30,17 +28,13 @@ let settingsDB = {
   address: "Katowice, Polska"
 };
 
-// Automatyczne utworzenie folderu uploads
 const uploadDir = path.join(ROOT, "public", "uploads");
 if (!fs.existsSync(uploadDir)){
     fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Konfiguracja Multer dla galerii
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
+  destination: (req, file, cb) => { cb(null, uploadDir); },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     cb(null, uniqueSuffix + path.extname(file.originalname));
@@ -48,7 +42,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// --- ENDPOINTY LOGOWANIA ---
 app.post("/api/admin/login", (req, res) => {
   const { username, password } = req.body;
   const adminUser = process.env.ADMIN_USER || "admin";
@@ -81,7 +74,6 @@ app.post("/api/admin/logout", (req, res) => {
   res.json({ success: true });
 });
 
-// --- DANE PUBLICZNE I STRONY ---
 app.get("/api/public-data", (req, res) => {
   res.json({
     gallery: galleryDB,
@@ -90,79 +82,55 @@ app.get("/api/public-data", (req, res) => {
   });
 });
 
-// Formularz kontaktowy
 app.post("/api/contact", async (req, res) => {
   const { name, phone, email, service_id, message } = req.body;
-
   try {
     await resend.emails.send({
       from: 'CARSPA KATO <kontakt@carspakato.pl>',
       to: "kontakt@carspakato.pl",
       subject: `Nowe zgłoszenie z formularza: ${name || "Klient"}`,
-      text: `Masz nowe zgłoszenie ze strony carspakato.pl!\n\nImię: ${name || "brak"}\nTelefon: ${phone || "brak"}\nE-mail: ${email || "brak"}\nUsługa: ${service_id || "brak"}\nWiadomość: ${message || "brak"}`
+      text: `Nowe zgłoszenie:\n\nImię: ${name}\nTelefon: ${phone}\nE-mail: ${email}\nUsługa: ${service_id}\nWiadomość: ${message}`
     });
     res.json({ success: true, message: "Wysłano pomyślnie!" });
   } catch (err) {
-    console.error("Błąd Resend:", err);
     res.status(500).json({ success: false, message: "Błąd wysyłania e-maila." });
   }
 });
 
-// --- GALERIA ADMINA ---
 app.post("/api/admin/gallery", upload.single('photo'), (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: "Nie przesłano pliku." });
-    }
-    const newPhoto = {
-      id: Date.now().toString(),
-      filename: req.file.filename,
-      caption: req.body.caption || ""
-    };
-    galleryDB.unshift(newPhoto); // Dodaj na początek listy
-    res.json({ success: true, message: "Dodano zdjęcie.", photo: newPhoto });
-  } catch (err) {
-    res.status(500).json({ error: "Błąd serwera." });
-  }
+  if (!req.file) return res.status(400).json({ error: "Nie przesłano pliku." });
+  const newPhoto = {
+    id: Date.now().toString(),
+    filename: req.file.filename,
+    caption: req.body.caption || ""
+  };
+  galleryDB.unshift(newPhoto);
+  res.json({ success: true, message: "Dodano zdjęcie.", photo: newPhoto });
 });
 
 app.delete("/api/admin/gallery/:id", (req, res) => {
-  const photoId = req.params.id;
-  galleryDB = galleryDB.filter(g => g.id !== photoId);
+  galleryDB = galleryDB.filter(g => g.id !== req.params.id);
   res.json({ success: true });
 });
 
-// --- USŁUGI I REZERWACJE ---
-app.get("/api/admin/services", (req, res) => {
-  res.json(servicesDB);
-});
-
+app.get("/api/admin/services", (req, res) => { res.json(servicesDB); });
 app.post("/api/admin/services", (req, res) => {
   const newService = { id: Date.now(), ...req.body };
   servicesDB.push(newService);
   res.json({ success: true, service: newService });
 });
-
 app.put("/api/admin/services/:id", (req, res) => {
   const id = Number(req.params.id);
   servicesDB = servicesDB.map(s => s.id === id ? { ...s, ...req.body } : s);
   res.json({ success: true });
 });
-
 app.delete("/api/admin/services/:id", (req, res) => {
-  const id = Number(req.params.id);
-  servicesDB = servicesDB.filter(s => s.id !== id);
+  servicesDB = servicesDB.filter(s => s.id !== Number(req.params.id));
   res.json({ success: true });
 });
 
-app.get("/api/admin/bookings", (req, res) => {
-  res.json(bookingsDB);
-});
-
-app.patch("/api/admin/bookings/:id", (req, res) => {
-  res.json({ success: true });
-});
-
+app.get("/api/admin/bookings", (req, res) => { res.json(bookingsDB); });
+app.patch("/api/admin/bookings/:id", (req, res) => { res.json({ success: true }); });
 app.put("/api/admin/settings", (req, res) => {
   settingsDB = { ...settingsDB, ...req.body };
   res.json({ success: true });
@@ -172,6 +140,4 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(ROOT, "public", "index.html"));
 });
 
-app.listen(PORT, () => {
-  console.log(`Serwer działa na porcie ${PORT}`);
-});
+app.listen(PORT, () => { console.log(`Serwer działa na porcie ${PORT}`); });
