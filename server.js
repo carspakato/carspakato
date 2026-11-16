@@ -20,6 +20,47 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
+// Pliki bazy danych JSON dla trwałości danych
+const dataDir = path.join(ROOT, "data");
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+const galleryFile = path.join(dataDir, "gallery.json");
+const settingsFile = path.join(dataDir, "settings.json");
+
+// Funkcje pomocnicze do odczytu/zapisu trwałych danych
+function getGallery() {
+  if (!fs.existsSync(galleryFile)) return [];
+  try {
+    return JSON.parse(fs.readFileSync(galleryFile, 'utf8'));
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveGallery(images) {
+  fs.writeFileSync(galleryFile, JSON.stringify(images, null, 2));
+}
+
+function getSettings() {
+  const defaultSettings = {
+    phone: "+48 000 000 000",
+    email: "kontakt@carspakato.pl",
+    address: "Katowice"
+  };
+  if (!fs.existsSync(settingsFile)) return defaultSettings;
+  try {
+    return { ...defaultSettings, ...JSON.parse(fs.readFileSync(settingsFile, 'utf8')) };
+  } catch (e) {
+    return defaultSettings;
+  }
+}
+
+function saveSettings(settings) {
+  fs.writeFileSync(settingsFile, JSON.stringify(settings, null, 2));
+}
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
@@ -28,14 +69,6 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage });
-
-// Pamięć podręczna na dane aplikacji
-let galleryImages = [];
-let siteSettings = {
-  phone: "+48 000 000 000",
-  email: "kontakt@carspakato.pl",
-  address: "Katowice"
-};
 
 const activeSessions = new Set();
 
@@ -84,9 +117,9 @@ app.post("/api/admin/logout", (req, res) => {
   res.json({ success: true });
 });
 
-// --- GALERIA API ---
+// --- GALERIA API (ZAPIS TRWAŁY) ---
 app.get("/api/gallery", (req, res) => {
-  res.json(galleryImages);
+  res.json(getGallery());
 });
 
 app.post("/api/admin/gallery", requireAdmin, upload.single('image'), (req, res) => {
@@ -95,8 +128,10 @@ app.post("/api/admin/gallery", requireAdmin, upload.single('image'), (req, res) 
       return res.status(400).json({ error: "Nie przesłano pliku." });
     }
     const imageUrl = `/uploads/${req.file.filename}`;
+    const gallery = getGallery();
     const newImage = { id: Date.now(), url: imageUrl };
-    galleryImages.push(newImage);
+    gallery.unshift(newImage); // Dodaj na początek listy
+    saveGallery(gallery);
     res.json({ success: true, image: newImage });
   } catch (err) {
     res.status(500).json({ error: "Błąd serwera podczas zapisu zdjęcia." });
@@ -105,29 +140,33 @@ app.post("/api/admin/gallery", requireAdmin, upload.single('image'), (req, res) 
 
 app.delete("/api/admin/gallery/:id", requireAdmin, (req, res) => {
   const id = Number(req.params.id);
-  const index = galleryImages.findIndex(img => img.id === id);
+  let gallery = getGallery();
+  const index = gallery.findIndex(img => img.id === id);
   if (index !== -1) {
-    const img = galleryImages[index];
+    const img = gallery[index];
     const filePath = path.join(ROOT, "public", img.url);
     if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    galleryImages.splice(index, 1);
+    gallery.splice(index, 1);
+    saveGallery(gallery);
     res.json({ success: true });
   } else {
     res.status(404).json({ error: "Nie znaleziono zdjęcia." });
   }
 });
 
-// --- USTAWIENIA / KONTAKT API ---
+// --- USTAWIENIA / KONTAKT API (ZAPIS TRWAŁY) ---
 app.get("/api/settings", (req, res) => {
-  res.json(siteSettings);
+  res.json(getSettings());
 });
 
 app.post("/api/admin/settings", requireAdmin, (req, res) => {
   const { phone, email, address } = req.body;
-  if (phone) siteSettings.phone = phone;
-  if (email) siteSettings.email = email;
-  if (address) siteSettings.address = address;
-  res.json({ success: true, settings: siteSettings });
+  const settings = getSettings();
+  if (phone) settings.phone = phone;
+  if (email) settings.email = email;
+  if (address) settings.address = address;
+  saveSettings(settings);
+  res.json({ success: true, settings });
 });
 
 // Jawna ścieżka do panelu admina
@@ -138,10 +177,11 @@ app.get("/admin.html", (req, res) => {
 // Formularz kontaktowy
 app.post("/api/contact", async (req, res) => {
   const { name, phone, email, service_id, message } = req.body;
+  const settings = getSettings();
   try {
     await resend.emails.send({
       from: 'CARSPA KATO <kontakt@carspakato.pl>',
-      to: siteSettings.email,
+      to: settings.email,
       subject: `Nowa rezerwacja od: ${name || "Klient"}`,
       text: `Nowe zgłoszenie:\n\nImię: ${name}\nTelefon: ${phone}\nE-mail: ${email}\nUsługa: ${service_id}\nWiadomość: ${message}`
     });
