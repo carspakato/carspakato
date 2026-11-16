@@ -29,7 +29,7 @@
     <button class="menu-toggle" id="menuToggle" aria-label="Otwórz menu">☰</button>
     <nav id="nav">
         <div class="nav-dropdown" id="servicesDropdown">
-            <span class="nav-dropdown-btn" id="servicesDropdownBtn" style="color: #f0f0f0; cursor: pointer;">Usługi ▾</span>
+            <a href="/#uslugi" class="nav-dropdown-btn" id="servicesDropdownBtn" style="color: #f0f0f0; text-decoration: none;">Usługi ▾</a>
             <div class="nav-dropdown-menu" id="servicesDropdownMenu">
                 <a href="/detailing-zewnetrzny.html">Detailing zewnętrzny</a>
                 <a href="/detailing-wewnetrzny.html" style="color: #ccff00 !important;">Detailing wewnętrzny</a>
@@ -124,5 +124,9 @@
     const btn = document.getElementById('servicesDropdownBtn');
     const menu = document.getElementById('servicesDropdownMenu');
     if (btn && menu) {
-        btn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); menu.classList.toggle('show'); });
-        menu.querySelectorAll('a').forEach(link => {
+        btn.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            e.stopPropagation(); 
+            menu.classList.toggle('show'); 
+        });
+        menu.
