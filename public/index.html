@@ -52,10 +52,152 @@
         <div><p class="eyebrow">EFEKTY NASZEJ PRACY</p><h2>GALERIA <span class="lime">REALIZACJI</span></h2></div>
         <p>Każdy detal ma znaczenie.</p>
     </div>
+    <!-- Zmienione id na "gallery" żeby pasowało do skryptów -->
     <div id="gallery" class="gallery-grid">
         <div class="gallery-empty">Wkrótce pojawią się tutaj zdjęcia naszych realizacji.</div>
     </div>
 </section>
 
 <section class="booking section" id="rezerwacja"><div class="booking-copy"><p class="eyebrow">ZACZNIJMY OD TWOJEGO AUTA</p><h2>UMÓW <span class="lime">WIZYTĘ</span></h2><p>Wypełnij formularz, a skontaktujemy się z Tobą, aby ustalić szczegóły i potwierdzić dogodny termin.</p></div>
-<form id="bookingForm" class="booking-form"><label>Imię *<input name="name" required placeholder="Jak się nazywasz?"></label><div class="form-row"><label>Numer telefonu *<input name="phone" required type="tel" placeholder="+48 ..."></label><label>Adres e-mail *<input name="email" type="email" placeholder="Adres e-mail"></label></div><label>Wybierz usługę *<select name="service_id" id="serviceSelect" required><option value="">Wybierz usługę</option></select></label><label>Dodatkowe informacje<textarea name="message" rows="3" placeholder="Marka i model auta, kolor, czego potrzebujesz?"></textarea></label><label class="consent"><input type="checkbox" name="consent" required> Wyrażam zgodę na kontakt w sprawie mojego zgłoszenia. *</label><button class="btn primary full" type="submit">WYŚLIJ ZGŁOSZENIE <span>↗️</span></button><p class="form-message" id="formMessage" role="status"></p><small class="fineprint">Wysłanie
+<form id="bookingForm" class="booking-form"><label>Imię *<input name="name" required placeholder="Jak się nazywasz?"></label><div class="form-row"><label>Numer telefonu *<input name="phone" required type="tel" placeholder="+48 ..."></label><label>Adres e-mail *<input name="email" type="email" placeholder="Adres e-mail"></label></div><label>Wybierz usługę *<select name="service_id" id="serviceSelect" required><option value="">Wybierz usługę</option></select></label><label>Dodatkowe informacje<textarea name="message" rows="3" placeholder="Marka i model auta, kolor, czego potrzebujesz?"></textarea></label><label class="consent"><input type="checkbox" name="consent" required> Wyrażam zgodę na kontakt w sprawie mojego zgłoszenia. *</label><button class="btn primary full" type="submit">WYŚLIJ ZGŁOSZENIE <span>↗️</span></button><p class="form-message" id="formMessage" role="status"></p><small class="fineprint">Wysłanie formularza nie oznacza automatycznego potwierdzenia terminu.</small></form></section>
+<section class="contact section" id="kontakt"><div><p class="eyebrow">POROZMAWIAJMY O TWOIM AUCIE</p><h2>MASZ PYTANIA?<br><span class="lime">JESTEŚMY DO DYSPOZYCJI.</span></h2></div><div class="contact-details"><p><small>TELEFON</small><a id="contactPhone" href="tel:+48000000000">+48 000 000 000</a></p><p><small>E-MAIL</small><a id="contactEmail" href="mailto:kontakt@carspakato.pl">carspakato@gmail.com</a></p><p><small>OBSZAR DZIAŁANIA</small><span id="contactAddress">Katowice i okolice</span></p><div class="socials"><a id="instagram" href="https://www.instagram.com/carspa_kato" target="_blank" rel="noreferrer">INSTAGRAM </a><a id="facebook" href="https://www.facebook.com/profile.php?id=61583846130144&locale=pl_PL" target="_blank" rel="noreferrer">FACEBOOK </a></div></div></section>
+</main>
+<footer>
+    <a class="brand" href="#">
+        <img src="/logo.svg" alt="CK Logo" style="width: 28px; height: 28px; border-radius: 3px; object-fit: contain; display: inline-block; vertical-align: middle; margin-right: 4px;">
+        <span>CARSPA <span class="lime">KATO</span><small>STUDIO DETAILINGU</small></span>
+    </a>
+    <span>©️ <span id="year"></span> CARSPA KATO. Wszelkie prawa zastrzeżone.</span>
+    <a href="/admin.html">Panel administratora</a>
+</footer>
+
+<!-- Okno modalne do powiększania zdjęć -->
+<div id="lightboxModal" onclick="this.style.display='none'">
+    <img id="lightboxImg" src="" alt="Powiększenie realizacji">
+</div>
+
+<script src="/site.js"></script>
+<script>
+    // Automatyczne ładowanie galerii, ustawień kontaktowych oraz obsługa formularza
+    async function loadHomePageData() {
+        // 1. Ładowanie galerii z Lightboxem
+        try {
+            const res = await fetch('/api/gallery');
+            const images = await res.json();
+            const grid = document.getElementById('gallery');
+            
+            if (images && images.length > 0) {
+                grid.innerHTML = images.map(img => `
+                    <div style="border-radius: 8px; overflow: hidden; background: #181818; border: 1px solid #333; cursor: pointer;" onclick="openLightbox('${img.url}')">
+                        <img src="${img.url}" alt="Realizacja CARSPA KATO" style="width: 100%; height: 240px; object-fit: cover; display: block; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                    </div>
+                `).join('');
+            }
+        } catch (err) {
+            console.error("Błąd ładowania galerii:", err);
+        }
+
+        // 2. Ładowanie ustawień kontaktowych (telefon, e-mail, adres)
+        try {
+            const res = await fetch('/api/settings');
+            const settings = await res.json();
+            
+            if (settings) {
+                if (settings.phone) {
+                    const phoneEl = document.getElementById('contactPhone');
+                    if (phoneEl) {
+                        phoneEl.textContent = settings.phone;
+                        phoneEl.href = `tel:${settings.phone.replace(/\s+/g, '')}`;
+                    }
+                }
+                if (settings.email) {
+                    const emailEl = document.getElementById('contactEmail');
+                    if (emailEl) {
+                        emailEl.textContent = settings.email;
+                        emailEl.href = `mailto:${settings.email}`;
+                    }
+                }
+                if (settings.address) {
+                    const addressEl = document.getElementById('contactAddress');
+                    if (addressEl) {
+                        addressEl.textContent = settings.address;
+                    }
+                }
+            }
+        } catch (err) {
+            console.error("Błąd ładowania ustawień:", err);
+        }
+    }
+
+    // Obsługa wysyłania formularza rezerwacji
+    function setupBookingForm() {
+        const form = document.getElementById('bookingForm');
+        const formMessage = document.getElementById('formMessage');
+
+        if (!form) return;
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const data = {
+                name: formData.get('name'),
+                phone: formData.get('phone'),
+                email: formData.get('email'),
+                service_id: formData.get('service_id') || 'Brak wybranej usługi',
+                message: formData.get('message')
+            };
+
+            if (formMessage) {
+                formMessage.textContent = "Wysyłanie zgłoszenia...";
+                formMessage.style.color = "#ccff00";
+            }
+
+            try {
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    if (formMessage) {
+                        formMessage.textContent = "Zgłoszenie zostało wysłane pomyślnie! Skontaktujemy się wkrótce.";
+                        formMessage.style.color = "#ccff00";
+                    }
+                    form.reset();
+                } else {
+                    if (formMessage) {
+                        formMessage.textContent = result.message || "Błąd podczas wysyłania. Spróbuj ponownie.";
+                        formMessage.style.color = "#ff4d4d";
+                    }
+                }
+            } catch (err) {
+                if (formMessage) {
+                    formMessage.textContent = "Błąd połączenia z serwerem.";
+                    formMessage.style.color = "#ff4d4d";
+                }
+            }
+        });
+    }
+
+    // Funkcja otwiera powiększone zdjęcie w oknie modalnym
+    function openLightbox(url) {
+        const modal = document.getElementById('lightboxModal');
+        const modalImg = document.getElementById('lightboxImg');
+        if (modal && modalImg) {
+            modalImg.src = url;
+            modal.style.display = 'flex';
+        }
+    }
+
+    // Uruchom po załadowaniu strony
+    document.addEventListener('DOMContentLoaded', () => {
+        loadHomePageData();
+        setupBookingForm();
+    });
+</script>
+</body>
+</html>
