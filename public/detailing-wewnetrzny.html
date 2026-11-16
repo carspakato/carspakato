@@ -104,26 +104,3 @@
             </div>
             <a class="btn primary" href="/#rezerwacja">UMÓW WIZYTĘ <span>↗️</span></a>
         </div>
-    </section>
-</main>
-
-<footer>
-    <a class="brand" href="/"><span class="brand-mark">C</span><span>CARSPA <span class="lime">KATO</span><small>STUDIO DETAILINGU</small></span></a>
-    <span>©️ <span id="year"></span> CARSPA KATO. Wszelkie prawa zastrzeżone.</span>
-    <a href="/admin.html">Panel administratora</a>
-</footer>
-
-<script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-    const menuToggle = document.getElementById('menuToggle');
-    const nav = document.getElementById('nav');
-    if (menuToggle && nav) { menuToggle.addEventListener('click', () => nav.classList.toggle('open')); }
-    const btn = document.getElementById('servicesDropdownBtn');
-    const menu = document.getElementById('servicesDropdownMenu');
-    if (btn && menu) {
-        btn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); menu.classList.toggle('show'); });
-        document.addEventListener('click', (e) => { if (!menu.contains(e.target) && e.target !== btn) { menu.classList.remove('show'); } });
-    }
-</script>
-</body>
-</html>
