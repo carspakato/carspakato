@@ -62,7 +62,29 @@ app.post("/api/admin/login", (req, res) => {
   if (username === (process.env.ADMIN_USER || "admin") && password === (process.env.ADMIN_PASS || "Hania2022.")) {
     const token = Math.random().toString(36).substring(2);
     activeSessions.add(token);
-    res.setHeader('Set-Cookie', `admin_token=${token}; Path=/; HttpOnly; SameSite=Strict`); res.json({ success: true }); } else { res.status(401).json({ error: "Nieprawidłowy login lub hasło." }); } });  app.get("/api/admin/me", (req, res) => { const cookie = req.headers.cookie \vert{}\vert{} ""; const token = (cookie.split('; ').find(row => row.startsWith('admin_token=')) \vert{}\vert{} "").split('=')[1]; if (token && activeSessions.has(token)) { res.json({ email: process.env.ADMIN_USER \vert{}\vert{} "admin" }); } else { res.status(401).json({ error: "Brak autoryzacji." }); } });  app.post("/api/admin/logout", (req, res) => { res.setHeader('Set-Cookie', 'admin_token=; Path=/; Max-Age=0'); res.json({ success: true }); });  app.get("/api/gallery", (req, res) => { res.json(getGallery()); }); app.post("/api/admin/gallery", requireAdmin, upload.single('image'), (req, res) => { if (!req.file) return res.status(400).json({ error: "Brak pliku" }); const gallery = getGallery(); const newImage = { id: Date.now(), url: `/uploads/${req.file.filename}` };
+    res.setHeader('Set-Cookie', `admin_token=${token}; Path=/; HttpOnly; SameSite=Strict`);
+    res.json({ success: true });
+  } else {
+    res.status(401).json({ error: "Nieprawidłowy login lub hasło." });
+  }
+});
+
+app.get("/api/admin/me", (req, res) => {
+  const cookie = req.headers.cookie || "";
+  const token = (cookie.split('; ').find(row => row.startsWith('admin_token=')) || "").split('=')[1];
+  if (token && activeSessions.has(token)) { res.json({ email: process.env.ADMIN_USER || "admin" }); } else { res.status(401).json({ error: "Brak autoryzacji." }); }
+});
+
+app.post("/api/admin/logout", (req, res) => {
+  res.setHeader('Set-Cookie', 'admin_token=; Path=/; Max-Age=0');
+  res.json({ success: true });
+});
+
+app.get("/api/gallery", (req, res) => { res.json(getGallery()); });
+app.post("/api/admin/gallery", requireAdmin, upload.single('image'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "Brak pliku" });
+  const gallery = getGallery();
+  const newImage = { id: Date.now(), url: `/uploads/${req.file.filename}` };
   gallery.unshift(newImage);
   saveGallery(gallery);
   res.json({ success: true, image: newImage });
@@ -101,7 +123,6 @@ app.get("/detailing-wewnetrzny.html", (req, res) => { res.sendFile(path.join(ROO
 app.get("/detailing-wnetrzny", (req, res) => { res.sendFile(path.join(ROOT, "public", "detailing-wewnetrzny.html")); });
 app.get("/detailing-wnetrzny.html", (req, res) => { res.sendFile(path.join(ROOT, "public", "detailing-wewnetrzny.html")); });
 
-// Jawne trasy dla korekt lakieru
 app.get("/korekty-lakieru", (req, res) => { res.sendFile(path.join(ROOT, "public", "korekty-lakieru.html")); });
 app.get("/korekty-lakieru.html", (req, res) => { res.sendFile(path.join(ROOT, "public", "korekty-lakieru.html")); });
 
@@ -112,4 +133,21 @@ app.post("/api/contact", async (req, res) => {
     await resend.emails.send({
       from: 'CARSPA KATO <kontakt@carspakato.pl>',
       to: settings.email,
-      subject: `Nowa rezerwacja od: ${name \vert{}\vert{} "Klient"}`, text: `Imię: ${name
+      subject: `Nowa rezerwacja od: ${name || "Klient"}`,
+      text: `Imię: ${name}\nTelefon: ${phone}\nE-mail: ${email}\nUsługa: ${service_id}\nWiadomość: ${message}`
+    });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
+});
+
+app.get("*", (req, res) => {
+  const filePath = path.join(ROOT, "public", req.path);
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+    return res.sendFile(filePath);
+  }
+  res.sendFile(path.join(ROOT, "public", "index.html"));
+});
+
+app.listen(PORT, () => { console.log(`Serwer działa na porcie ${PORT}`); });
