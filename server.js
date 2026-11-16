@@ -1,135 +1,64 @@
-const express = require('express');
-const { Resend } = require('resend');
-const path = require('path');
-const fs = require('fs');
-const multer = require('multer');
+const express = require("express");
+const path = require("path");
+const nodemailer = require("nodemailer");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const ROOT = path.join(__dirname);
+const ROOT = __dirname;
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "carspakato@gmail.com",
+    pass: "epglqkeatpsavcwo"
+  }
+});
 
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(express.static(path.join(ROOT, "public")));
 
-// Upewnij się, że katalog na wgrywane zdjęcia istnieje
-const uploadDir = path.join(ROOT, "public", "uploads");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+const servicesList = [
+  { id:1, name: "Mycie – Premium wash", description: "Dokładne, bezpieczne mycie wstępne i właściwe.", price: "od 200 zł", duration: "2-3 godz." },
+  { id:2, name: "Mycie – Detailing wnętrza", description: "Dokładne czyszczenie i pielęgnacja elementów wnętrza.", price: "od 300 zł", duration: "4-6 godz." },
+  { id:3, name: "Podstawowe sprzątanie wnętrza", description: "Szybkie odświeżenie i odkurzenie kabiny.", price: "od 100 zł", duration: "1-2 godz." },
+  { id:4, name: "Pranie kompleksowe tapicerki", description: "Głębokie czyszczenie wszystkich elementów materiałowych.", price: "od 400 zł", duration: "1 dzień" },
+  { id:5, name: "Korekty lakieru", description: "Odświeżenie lakieru, usunięcie rys i poprawa połysku.", price: "od 600 zł", duration: "1 dzień" },
+  { id:6, name: "Zabezpieczenie karoserii woskiem", description: "Aplikacja trwałego wosku nadającego głęboki połysk.", price: "od 300 zł", duration: "3-4 godz." },
+  { id:7, name: "Zabezpieczenie karoserii powłoką ceramiczną", description: "Trwała ochrona lakieru przed czynnikami zewnętrznymi.", price: "od 700 zł", duration: "1 dzień" },
+  { id:8, name: "Zabezpieczenie lakieru folią PPF", description: "Najwyższy stopień ochrony lakieru przed odpryskami.", price: "do uzgodnienia", duration: "1-3 dni" },
+  { id:9, name: "Zabezpieczenie szyb powłoką ceramiczną", description: "Hydrofobowa niewidzialna wycieraczka.", price: "od 300 zł", duration: "2 godz." },
+  { id:10, name: "Renowacja reflektorów", description: "Usunięcie zmatowień i przywrócenie przejrzystości.", price: "od 100 zł/szt", duration: "1-2 godz." },
+  { id:11, name: "Ozonowanie wnętrza", description: "Dezynfekcja i neutralizacja przykrych zapachów.", price: "od 250 zł", duration: "1 godz." },
+  { id:12, name: "Przygotowanie auta hatchback do sprzedaży", description: "Kompleksowy detailing podnoszący wartość rynkową auta.", price: "od 600 zł", duration: "1 dzień" },
+  { id:13, name: "Przygotowanie auta combi do sprzedaży", description: "Kompleksowe odświeżenie wersji kombi przed sprzedażą.", price: "od 800 zł", duration: "1 dzień" },
+  { id:14, name: "Przygotowanie auta SUV do sprzedaży", description: "Pełny pakiet przygotowawczy dla dużych aut typu SUV.", price: "od 1 000 zł", duration: "1-2 dni" }
+];
 
-// Konfiguracja Multer do zapisywania przesyłanych zdjęć
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+app.get('/api/services', (req, res) => {
+  res.json(servicesList);
+});
+
+// Endpoint rezerwacji bez daty i godziny
+app.post('/api/booking', async (req, res) => {
+  const { name, phone, email, service_id, notes } = req.body;
+  
+  if (!name || !phone || !service_id) {
+    return res.status(400).json({ error: "Wypełnij wymagane pola." });
   }
-});
-const upload = multer({ storage });
 
-// Tablica przechowująca zdjęcia galerii
-let galleryImages = [];
-
-const activeSessions = new Set();
-
-// Middleware do sprawdzania autoryzacji admina
-function requireAdmin(req, res, next) {
-  const cookie = req.headers.cookie || "";
-  const tokenMatch = cookie.split('; ').find(row => row.startsWith('admin_token='));
-  const token = tokenMatch ? tokenMatch.split('=')[1] : null;
-
-  if (token && activeSessions.has(token)) {
-    next();
-  } else {
-    res.status(401).json({ error: "Brak autoryzacji." });
-  }
-}
-
-app.post("/api/admin/login", (req, res) => {
-  const { username, password } = req.body;
-  const adminUser = process.env.ADMIN_USER || "admin";
-  const adminPass = process.env.ADMIN_PASS || "Hania2022.";
-
-  if (username === adminUser && password === adminPass) {
-    const token = Math.random().toString(36).substring(2);
-    activeSessions.add(token);
-    res.setHeader('Set-Cookie', `admin_token=${token}; Path=/; HttpOnly; SameSite=Strict`);
-    res.json({ success: true, email: adminUser });
-  } else {
-    res.status(401).json({ error: "Nieprawidłowy login lub hasło." });
-  }
-});
-
-app.get("/api/admin/me", (req, res) => {
-  const cookie = req.headers.cookie || "";
-  const tokenMatch = cookie.split('; ').find(row => row.startsWith('admin_token='));
-  const token = tokenMatch ? tokenMatch.split('=')[1] : null;
-
-  if (token && activeSessions.has(token)) {
-    res.json({ email: process.env.ADMIN_USER || "admin" });
-  } else {
-    res.status(401).json({ error: "Brak autoryzacji." });
-  }
-});
-
-app.post("/api/admin/logout", (req, res) => {
-  res.setHeader('Set-Cookie', 'admin_token=; Path=/; Max-Age=0');
-  res.json({ success: true });
-});
-
-// --- API GALERIA ---
-app.get("/api/gallery", (req, res) => {
-  res.json(galleryImages);
-});
-
-app.post("/api/admin/gallery", requireAdmin, upload.single('image'), (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: "Nie przesłano pliku." });
-    }
-    const imageUrl = `/uploads/${req.file.filename}`;
-    const newImage = { id: Date.now(), url: imageUrl };
-    galleryImages.push(newImage);
-    res.json({ success: true, image: newImage });
-  } catch (err) {
-    console.error("Błąd wgrywania zdjęcia:", err);
-    res.status(500).json({ error: "Błąd serwera podczas zapisu zdjęcia." });
-  }
-});
-
-app.delete("/api/admin/gallery/:id", requireAdmin, (req, res) => {
-  const id = Number(req.params.id);
-  const index = galleryImages.findIndex(img => img.id === id);
-  if (index !== -1) {
-    const img = galleryImages[index];
-    const filePath = path.join(ROOT, "public", img.url);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
-    galleryImages.splice(index, 1);
-    res.json({ success: true });
-  } else {
-    res.status(404).json({ error: "Nie znaleziono zdjęcia." });
-  }
-});
-
-// --- KONTAKT ---
-app.post("/api/contact", async (req, res) => {
-  const { name, phone, email, service_id, message } = req.body;
-  try {
-    await resend.emails.send({
-      from: 'CARSPA KATO <kontakt@carspakato.pl>',
-      to: "kontakt@carspakato.pl",
-      subject: `Nowa rezerwacja od: ${name || "Klient"}`,
-      text: `Nowe zgłoszenie ze strony:\n\nImię: ${name}\nTelefon: ${phone}\nE-mail: ${email}\nUsługa: ${service_id}\nWiadomość: ${message}`
+    await transporter.sendMail({
+      from: '"CARSPA KATO" <carspakato@gmail.com>',
+      to: "carspakato@gmail.com",
+      subject: `Nowe zgłoszenie: ${name} (${phone})`,
+      text: `Masz nowe zgłoszenie rezerwacji ze strony!\n\nImię i nazwisko: ${name}\nTelefon: ${phone}\nE-mail klienta: ${email || "brak"}\nWybrana usługa (ID): ${service_id}\nDodatkowe informacje: ${notes || "brak"}`
     });
-    res.json({ success: true, message: "Wysłano pomyślnie!" });
+
+    res.json({ success: true, message: "Zgłoszenie zostało wysłane!" });
   } catch (err) {
-    console.error("Błąd Resend:", err);
-    res.status(500).json({ success: false, message: "Błąd wysyłania e-maila." });
+    console.error("Błąd wysyłania e-maila:", err);
+    res.status(500).json({ error: "Nie udało się wysłać wiadomości e-mail." });
   }
 });
 
@@ -138,5 +67,5 @@ app.get("*", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Serwer działa na porcie ${PORT}`);
+  console.log(`CARSPA KATO działa na: http://localhost:${PORT}`);
 });
