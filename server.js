@@ -129,6 +129,9 @@ app.get("/korekty-lakieru.html", (req, res) => { res.sendFile(path.join(ROOT, "p
 app.get("/ochrona-lakieru", (req, res) => { res.sendFile(path.join(ROOT, "public", "ochrona-lakieru.html")); });
 app.get("/ochrona-lakieru.html", (req, res) => { res.sendFile(path.join(ROOT, "public", "ochrona-lakieru.html")); });
 
+app.get("/zabezpieczenie-lakieru", (req, res) => { res.sendFile(path.join(ROOT, "public", "zabezpieczenie-lakieru.html")); });
+app.get("/zabezpieczenie-lakieru.html", (req, res) => { res.sendFile(path.join(ROOT, "public", "zabezpieczenie-lakieru.html")); });
+
 app.post("/api/contact", async (req, res) => {
   const { name, phone, email, service_id, message } = req.body;
   const settings = getSettings();
