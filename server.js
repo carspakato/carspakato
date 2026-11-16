@@ -1,20 +1,12 @@
 const express = require("express");
 const path = require("path");
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
 
-const transporter = nodemailer.createTransport({
-  host: "poczta2686890.home.pl",
-  port: 465,
-  secure: true,
-  auth: {
-    user: "kontakt+carspakato_pl.poczta2686890@poczta2686890.home.pl",
-    pass: "qouw-mvge-eunv-bfab"
-  }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -45,16 +37,17 @@ app.post('/api/contact', async (req, res) => {
   const { name, phone, email, service_id, message } = req.body;
 
   try {
-    await transporter.sendMail({
-      from: '"CARSPA KATO" <kontakt@carspakato.pl>',
+    const data = await resend.emails.send({
+      from: 'CARSPA KATO <onboarding@resend.dev>',
       to: "kontakt@carspakato.pl",
       subject: `Nowe zgłoszenie z formularza: ${name || "Klient"}`,
       text: `Masz nowe zgłoszenie ze strony carspakato.pl!\n\nImię: ${name || "brak"}\nTelefon: ${phone || "brak"}\nE-mail: ${email || "brak"}\nWybrana usługa: ${service_id || "brak"}\nWiadomość: ${message || "brak"}`
     });
 
+    console.log("E-mail wysłany pomyślnie przez Resend:", data);
     res.json({ success: true, message: "Zgłoszenie zostało wysłane pomyślnie!" });
   } catch (err) {
-    console.error("Błąd wysyłania e-maila:", err);
+    console.error("Błąd wysyłania e-maila przez Resend:", err);
     res.status(500).json({ success: false, message: "Nie udało się wysłać wiadomości e-mail." });
   }
 });
