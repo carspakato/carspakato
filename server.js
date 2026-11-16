@@ -141,7 +141,7 @@ app.post("/api/contact", async (req, res) => {
   try {
     await resend.emails.send({
       from: 'CARSPA KATO <kontakt@carspakato.pl>',
-      to: siteSettings.email, // Wysyła na e-mail ustawiony w panelu!
+      to: siteSettings.email,
       subject: `Nowa rezerwacja od: ${name || "Klient"}`,
       text: `Nowe zgłoszenie:\n\nImię: ${name}\nTelefon: ${phone}\nE-mail: ${email}\nUsługa: ${service_id}\nWiadomość: ${message}`
     });
