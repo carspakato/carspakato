@@ -1,18 +1,18 @@
 [
   {
     "id": 1,
-    "url": "/uploads/zdjecie1"
+    "url": "/uploads/zdjecie1.jpeg"
   },
   {
     "id": 2,
-    "url": "/uploads/zdjecie2"
+    "url": "/uploads/zdjecie2.jpeg"
   },
   {
     "id": 3,
-    "url": "/uploads/zdjecie3"
+    "url": "/uploads/zdjecie3.jpeg"
   },
   {
     "id": 4,
-    "url": "/uploads/zdjecie4"
+    "url": "/uploads/zdjecie4.jpeg"
   }
 ]
