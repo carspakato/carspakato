@@ -1,1 +1,18 @@
-
+[
+  {
+    "id": 1,
+    "url": "/uploads/zdjecie1.jpg"
+  },
+  {
+    "id": 2,
+    "url": "/uploads/zdjecie2.jpg"
+  },
+  {
+    "id": 3,
+    "url": "/uploads/zdjecie3.jpg"
+  },
+  {
+    "id": 4,
+    "url": "/uploads/zdjecie4.jpg"
+  }
+]
